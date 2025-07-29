@@ -1,0 +1,615 @@
+name: CI/CD for bmm-inboundops-api
+
+on:
+  push:
+    branches:
+      - develop # Deploy to Dev
+      - main # Deploy to Production
+      - release/* # Deploy to Stage
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to promote (Development/Test/SharedTest/Stage/Production/SharedProduction)'
+        required: true
+        default: 'Development'
+
+jobs:
+  build-and-deploy:
+    if: ${{ github.event.inputs.environment == 'Development'|| github.ref == 'refs/heads/develop' }}
+    name: Deploy to Dev
+    runs-on: bmm-inboundops-api-dev
+    environment: Development
+
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+      
+    defaults:
+      run:
+        working-directory: ./BMMS-Inbound-OPS-EAPI
+        
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
+
+      - name: List Nuget Sources
+        run: dotnet nuget list source
+
+
+      - name: Setup NuGet Authentication
+        shell: powershell
+        run: |
+          dotnet nuget remove source github
+          dotnet nuget add source "https://nuget.pkg.github.com/WRBerkley/index.json"  `
+          --name github  `
+          --username "GITHUB"  `
+          --password "${{ secrets.GITHUB_TOKEN }}"  `
+          --store-password-in-clear-text
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build the solution
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Publish the project
+        run: dotnet publish -c Release -o ./publish --no-restore
+        
+      - name: Set Environment Variables (PowerShell)
+        shell: powershell
+        run: |
+          [Environment]::SetEnvironmentVariable("Auth:MitchellUsername", "${{secrets.MITCHELL_USERNAME}}", "Machine")
+          [Environment]::SetEnvironmentVariable("Auth:MitchellPassword", "${{secrets.MITCHELL_PASSWORD}}", "Machine")
+          [Environment]::SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development", "Machine")
+          [Environment]::SetEnvironmentVariable("BMMSCOREAPI_URL", "${{ secrets.BMMSCOREAPI_URL }}", "Machine")
+          Write-Host "Environment variable ASPNETCORE_ENVIRONMENT and BMMSCOREAPI_URL set globally."
+
+      - name: Backup Existing Deployment
+        run: |
+          $publishPath = "C:\inetpub\wwwroot\bmm-inboundops-api"
+          $backupPath = "D:\backups\bmm-inboundops-api"
+          $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+          if (Test-Path $publishPath) {
+            New-Item -ItemType Directory -Path $backupPath -ErrorAction SilentlyContinue
+            Copy-Item -Recurse -Path $publishPath -Destination "$backupPath\bmm-inboundops-api-$timestamp"
+            Write-Host "Backup created at $backupPath\bmm-inboundops-api-$timestamp"
+          } else {
+            Write-Host "No existing deployment found. Skipping backup."
+          }
+
+
+      - name: Stop IIS App Pool (SHARED TEST)
+        shell: powershell
+        run: |
+          Import-Module WebAdministration
+          $appPoolName = "bmm-inboundops-api"
+          $appPool = Get-WebAppPoolState -Name $appPoolName
+        
+          if ($appPool.Value -eq "Started") {
+            Write-Host "App Pool '$appPoolName' is running. Stopping it..."
+            Stop-WebAppPool -Name $appPoolName
+          } else {
+            Write-Host "App Pool '$appPoolName' is already stopped. Skipping..."
+          }
+
+      - name: Wait to release locked files if Any
+        shell: powershell
+        run: Start-Sleep -Seconds 10
+        
+      - name: Deploy to IIS (Dev)
+        run: |
+          $publishPath = "C:\inetpub\wwwroot\bmm-inboundops-api"
+          robocopy ./publish $publishPath /E /Z /XO
+          iisreset
+        
+      - name: Start IIS App Pool (TEST)
+        shell: powershell
+        run: |
+          Import-Module WebAdministration
+          Start-WebAppPool -Name "bmm-inboundops-api"
+
+
+  promote-to-test:
+    if: ${{ github.event.inputs.environment == 'Test' }}
+    name: Promote to Test
+    runs-on: bmm-inboundops-api-test
+    environment: Test
+
+    defaults:
+      run:
+        working-directory: ./BMMS-Inbound-OPS-EAPI
+    
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+      
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
+      
+      - name: List Nuget Sources
+        run: dotnet nuget list source
+
+      - name: Setup NuGet Authentication
+        shell: powershell
+        run: |
+          dotnet nuget remove source github
+          dotnet nuget add source "https://nuget.pkg.github.com/WRBerkley/index.json"  `
+          --name github  `
+          --username "GITHUB"  `
+          --password "${{ secrets.GITHUB_TOKEN }}"  `
+          --store-password-in-clear-text
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build the solution
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Publish the project
+        run: dotnet publish -c Release -o ./publish --no-restore
+
+      - name: Set Environment Variables (PowerShell)
+        shell: powershell
+        run: |
+          [Environment]::SetEnvironmentVariable("Auth:MitchellUsername", "${{secrets.MITCHELL_USERNAME}}", "Machine")
+          [Environment]::SetEnvironmentVariable("Auth:MitchellPassword", "${{secrets.MITCHELL_PASSWORD}}", "Machine")
+          [Environment]::SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Test", "Machine")
+          [Environment]::SetEnvironmentVariable("BMMSCOREAPI_URL", "${{ secrets.BMMSCOREAPI_URL }}", "Machine")
+          Write-Host "Environment variable ASPNETCORE_ENVIRONMENT and BMMSCOREAPI_URL set globally."
+
+      - name: Backup Existing Deployment
+        run: |
+          $publishPath = "C:\inetpub\wwwroot\bmm-inboundops-api"
+          $backupPath = "D:\backups\bmm-inboundops-api"
+          $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+          if (Test-Path $publishPath) {
+            New-Item -ItemType Directory -Path $backupPath -ErrorAction SilentlyContinue
+            Copy-Item -Recurse -Path $publishPath -Destination "$backupPath\bmm-inboundops-api-$timestamp"
+            Write-Host "Backup created at $backupPath\bmm-inboundops-api-$timestamp"
+          } else {
+            Write-Host "No existing deployment found. Skipping backup."
+          }
+          
+      - name: Stop IIS App Pool (TEST)
+        shell: powershell
+        run: |
+          Import-Module WebAdministration
+          $appPoolName = "bmm-inboundops-api"
+          $appPool = Get-WebAppPoolState -Name $appPoolName
+        
+          if ($appPool.Value -eq "Started") {
+            Write-Host "App Pool '$appPoolName' is running. Stopping it..."
+            Stop-WebAppPool -Name $appPoolName
+          } else {
+            Write-Host "App Pool '$appPoolName' is already stopped. Skipping..."
+          }
+          
+      - name: Wait to release locked files if Any
+        shell: powershell
+        run: Start-Sleep -Seconds 10
+
+
+      - name: Deploy to IIS (TEST)
+        run: |
+          $publishPath = "C:\inetpub\wwwroot\bmm-inboundops-api"
+          Remove-Item -Recurse -Force $publishPath\*
+          robocopy ./publish $publishPath /E /Z /XO
+          iisreset
+          
+      - name: Start IIS App Pool (TEST)
+        shell: powershell
+        run: |
+          Import-Module WebAdministration
+          Start-WebAppPool -Name "bmm-inboundops-api"
+
+
+  promote-to-sharedtest:
+    if: ${{ github.event.inputs.environment == 'SharedTest' }}
+    name: Promote to SharedTest
+    runs-on: bmm-inboundops-api-sharedtest
+    environment: SharedTest
+
+    defaults:
+      run:
+        working-directory: ./BMMS-Inbound-OPS-EAPI
+    
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+      
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
+      
+      - name: List Nuget Sources
+        run: dotnet nuget list source
+
+      - name: Setup NuGet Authentication
+        shell: powershell
+        run: |
+          dotnet nuget remove source github
+          dotnet nuget add source "https://nuget.pkg.github.com/WRBerkley/index.json"  `
+          --name github  `
+          --username "GITHUB"  `
+          --password "${{ secrets.GITHUB_TOKEN }}"  `
+          --store-password-in-clear-text
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build the solution
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Publish the project
+        run: dotnet publish -c Release -o ./publish --no-restore
+
+      - name: Set Environment Variables (PowerShell)
+        shell: powershell
+        run: |
+          [Environment]::SetEnvironmentVariable("Auth:MitchellUsername", "${{secrets.MITCHELL_USERNAME}}", "Machine")
+          [Environment]::SetEnvironmentVariable("Auth:MitchellPassword", "${{secrets.MITCHELL_PASSWORD}}", "Machine")
+          [Environment]::SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "SharedTest", "Machine")
+          [Environment]::SetEnvironmentVariable("BMMSCOREAPI_URL", "${{ secrets.BMMSCOREAPI_URL }}", "Machine")
+          Write-Host "Environment variable ASPNETCORE_ENVIRONMENT and BMMSCOREAPI_URL set globally."
+
+      - name: Backup Existing Deployment
+        run: |
+          $publishPath = "C:\inetpub\wwwroot\bmm-inboundops-api"
+          $backupPath = "D:\backups\bmm-inboundops-api"
+          $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+          if (Test-Path $publishPath) {
+            New-Item -ItemType Directory -Path $backupPath -ErrorAction SilentlyContinue
+            Copy-Item -Recurse -Path $publishPath -Destination "$backupPath\bmm-inboundops-api-$timestamp"
+            Write-Host "Backup created at $backupPath\bmm-inboundops-api-$timestamp"
+          } else {
+            Write-Host "No existing deployment found. Skipping backup."
+          }
+
+      - name: Stop IIS App Pool (SHARED TEST)
+        shell: powershell
+        run: |
+          Import-Module WebAdministration
+          $appPoolName = "bmm-inboundops-api"
+          $appPool = Get-WebAppPoolState -Name $appPoolName
+        
+          if ($appPool.Value -eq "Started") {
+            Write-Host "App Pool '$appPoolName' is running. Stopping it..."
+            Stop-WebAppPool -Name $appPoolName
+          } else {
+            Write-Host "App Pool '$appPoolName' is already stopped. Skipping..."
+          }
+
+      - name: Wait to release locked files if Any
+        shell: powershell
+        run: Start-Sleep -Seconds 10
+
+      - name: Deploy to IIS (SHARED TEST)
+        run: |
+          $publishPath = "C:\inetpub\wwwroot\bmm-inboundops-api"
+          Remove-Item -Recurse -Force $publishPath\*
+          robocopy ./publish $publishPath /E /Z /XO
+          iisreset
+          
+      - name: Start IIS App Pool (SharedTest)
+        shell: powershell
+        run: |
+          Import-Module WebAdministration
+          Start-WebAppPool -Name "bmm-inboundops-api"
+
+
+  promote-to-stage:
+    if: ${{ github.event.inputs.environment == 'Stage' }}
+    name: Promote to Stage
+    runs-on: bmm-inboundops-api-stage
+    environment: Stage
+
+    defaults:
+      run:
+        working-directory: ./BMMS-Inbound-OPS-EAPI
+        
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+      
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
+          
+      - name: List Nuget Sources
+        run: dotnet nuget list source
+
+      - name: Setup NuGet Authentication
+        shell: powershell
+        run: |
+          dotnet nuget remove source github
+          dotnet nuget add source "https://nuget.pkg.github.com/WRBerkley/index.json"  `
+          --name github  `
+          --username "GITHUB"  `
+          --password "${{ secrets.GITHUB_TOKEN }}"  `
+          --store-password-in-clear-text
+          
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build the solution
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Publish the project
+        run: dotnet publish -c Release -o ./publish --no-restore
+
+      - name: Set Environment Variables (PowerShell)
+        shell: powershell
+        run: |
+          [Environment]::SetEnvironmentVariable("Auth:MitchellUsername", "${{secrets.MITCHELL_USERNAME}}", "Machine")
+          [Environment]::SetEnvironmentVariable("Auth:MitchellPassword", "${{secrets.MITCHELL_PASSWORD}}", "Machine")
+          [Environment]::SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Stage", "Machine")
+          [Environment]::SetEnvironmentVariable("BMMSCOREAPI_URL", "${{ secrets.BMMSCOREAPI_URL }}", "Machine")
+          Write-Host "Environment variable ASPNETCORE_ENVIRONMENT and BMMSCOREAPI_URL set globally."
+
+      - name: Backup Existing Deployment
+        run: |
+          $publishPath = "C:\inetpub\wwwroot\bmm-inboundops-api"
+          $backupPath = "D:\backups\bmm-inboundops-api"
+          $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+          if (Test-Path $publishPath) {
+            New-Item -ItemType Directory -Path $backupPath -ErrorAction SilentlyContinue
+            Copy-Item -Recurse -Path $publishPath -Destination "$backupPath\bmm-inboundops-api-$timestamp"
+            Write-Host "Backup created at $backupPath\bmm-inboundops-api-$timestamp"
+          } else {
+            Write-Host "No existing deployment found. Skipping backup."
+          }
+
+      - name: Deploy to IIS (STAGE)
+        run: |
+          $publishPath = "C:\inetpub\wwwroot\bmm-inboundops-api"
+          Remove-Item -Recurse -Force $publishPath\*
+          robocopy ./publish $publishPath /E /Z /XO
+          iisreset
+
+
+  promote-to-prod:
+    if: ${{ github.event.inputs.environment == 'Production'  }}
+    name: Promote to Production
+    runs-on: bmm-inboundops-api-prod
+    environment: Production
+
+    defaults:
+      run:
+        working-directory: ./BMMS-Inbound-OPS-EAPI
+    
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+      
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
+          
+      - name: List Nuget Sources
+        run: dotnet nuget list source
+        
+      - name: Setup NuGet Authentication
+        shell: powershell
+        run: |
+          dotnet nuget remove source github
+          dotnet nuget add source "https://nuget.pkg.github.com/WRBerkley/index.json"  `
+          --name github  `
+          --username "GITHUB"  `
+          --password "${{ secrets.GITHUB_TOKEN }}"  `
+          --store-password-in-clear-text
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build the solution
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Publish the project
+        run: dotnet publish -c Release -o ./publish --no-restore
+
+      - name: Set Environment Variables (PowerShell)
+        shell: powershell
+        run: |
+          [Environment]::SetEnvironmentVariable("Auth:MitchellUsername", "${{secrets.MITCHELL_USERNAME}}", "Machine")
+          [Environment]::SetEnvironmentVariable("Auth:MitchellPassword", "${{secrets.MITCHELL_PASSWORD}}", "Machine")
+          [Environment]::SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Production", "Machine")
+          [Environment]::SetEnvironmentVariable("BMMSCOREAPI_URL", "${{ secrets.BMMSCOREAPI_URL }}", "Machine")
+          Write-Host "Environment variable ASPNETCORE_ENVIRONMENT and BMMSCOREAPI_URL set globally."
+
+      - name: Backup Existing Deployment
+        run: |
+          $publishPath = "C:\inetpub\wwwroot\bmm-inboundops-api"
+          $backupPath = "D:\backups\bmm-inboundops-api"
+          $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+          if (Test-Path $publishPath) {
+            New-Item -ItemType Directory -Path $backupPath -ErrorAction SilentlyContinue
+            Copy-Item -Recurse -Path $publishPath -Destination "$backupPath\bmm-inboundops-api-$timestamp"
+            Write-Host "Backup created at $backupPath\bmm-inboundops-api-$timestamp"
+          } else {
+            Write-Host "No existing deployment found. Skipping backup."
+          }
+
+      - name: Deploy to IIS (Production)
+        run: |
+          $publishPath = "C:\inetpub\wwwroot\bmm-inboundops-api"
+          Remove-Item -Recurse -Force $publishPath\*
+          robocopy ./publish $publishPath /E /Z /XO
+          iisreset
+
+  promote-to-sharedprod:
+    if: ${{ github.event.inputs.environment == 'SharedProduction'  }}
+    name: Promote to Shared Production
+    runs-on: bmm-inboundops-api-sharedprod
+    environment: SharedProduction
+
+    defaults:
+      run:
+        working-directory: ./BMMS-Inbound-OPS-EAPI
+    
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+      
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
+          
+      - name: List Nuget Sources
+        run: dotnet nuget list source
+        
+      - name: Setup NuGet Authentication
+        shell: powershell
+        run: |
+          dotnet nuget remove source github
+          dotnet nuget add source "https://nuget.pkg.github.com/WRBerkley/index.json"  `
+          --name github  `
+          --username "GITHUB"  `
+          --password "${{ secrets.GITHUB_TOKEN }}"  `
+          --store-password-in-clear-text
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build the solution
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Publish the project
+        run: dotnet publish -c Release -o ./publish --no-restore
+
+      - name: Set Environment Variables (PowerShell)
+        shell: powershell
+        run: |
+          [Environment]::SetEnvironmentVariable("Auth:MitchellUsername", "${{secrets.MITCHELL_USERNAME}}", "Machine")
+          [Environment]::SetEnvironmentVariable("Auth:MitchellPassword", "${{secrets.MITCHELL_PASSWORD}}", "Machine")
+          [Environment]::SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "SharedProduction", "Machine")
+          [Environment]::SetEnvironmentVariable("BMMSCOREAPI_URL", "${{ secrets.BMMSCOREAPI_URL }}", "Machine")
+          Write-Host "Environment variable ASPNETCORE_ENVIRONMENT and BMMSCOREAPI_URL set globally."
+
+      - name: Backup Existing Deployment
+        run: |
+          $publishPath = "C:\inetpub\wwwroot\bmm-inboundops-api"
+          $backupPath = "D:\backups\bmm-inboundops-api"
+          $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+          if (Test-Path $publishPath) {
+            New-Item -ItemType Directory -Path $backupPath -ErrorAction SilentlyContinue
+            Copy-Item -Recurse -Path $publishPath -Destination "$backupPath\bmm-inboundops-api-$timestamp"
+            Write-Host "Backup created at $backupPath\bmm-inboundops-api-$timestamp"
+          } else {
+            Write-Host "No existing deployment found. Skipping backup."
+          }
+
+      
+      - name: Stop IIS App Pool (SHARED PROD)
+        shell: powershell
+        run: |
+          Import-Module WebAdministration
+          $appPoolName = "bmm-inboundops-api"
+          $appPool = Get-WebAppPoolState -Name $appPoolName
+        
+          if ($appPool.Value -eq "Started") {
+            Write-Host "App Pool '$appPoolName' is running. Stopping it..."
+            Stop-WebAppPool -Name $appPoolName
+          } else {
+            Write-Host "App Pool '$appPoolName' is already stopped. Skipping..."
+          }
+
+      - name: Wait to release locked files if Any
+        shell: powershell
+        run: Start-Sleep -Seconds 10
+
+     # - name: Deploy to IIS (SHARED PROD)
+     #   run: |
+     #    $publishPath = "C:\inetpub\wwwroot\bmm-inboundops-api"
+     #    Remove-Item -Recurse -Force $publishPath\*
+     #     robocopy ./publish $publishPath /E /Z /XO
+      
+      - name: Deploy files to IIS
+        run: |
+          $publishPath = "C:\inetpub\wwwroot\bmm-inboundops-api"
+          
+          # Optional: Clear existing files, but robocopy /MIR is often better
+          # Remove-Item -Recurse -Force "$publishPath\*" -ErrorAction SilentlyContinue
+      
+          # Perform robocopy and capture its exit code
+          robocopy ./publish "$publishPath" /E /Z /XO
+          $lastExitCode = $LASTEXITCODE
+      
+          # Check robocopy's specific success codes
+          # 0 = No errors, no changes made (source and dest identical)
+          # 1 = All files copied successfully
+          # 2 = Some extra files/dirs detected (no copy errors)
+          # 3 = Some files copied, some extra files/dirs detected (no copy errors)
+          # 5 = Some files copied, some mismatch, some extra files/dirs detected (no copy errors)
+          # 6 = No files copied, but source and dest are identical, and some extra files/dirs detected (no copy errors)
+          # 7 = Some files copied, no errors.
+          if ($lastExitCode -le 7) {
+            Write-Host "Robocopy completed successfully with exit code: $lastExitCode"
+            exit 0 # Explicitly exit PowerShell with 0 for success
+          } else {
+            Write-Host "Robocopy failed with exit code: $lastExitCode"
+            exit $lastExitCode # Exit with robocopy's error code to fail the step
+          }
+        shell: powershell
+      
+      - name: Start World Wide Web Publishing Service (W3SVC)
+        shell: powershell
+        run: |
+          try {
+            Start-Service -Name W3SVC -ErrorAction Stop
+            Write-Host "W3SVC service started successfully."
+          }
+          catch {
+            Write-Host "W3SVC service failed to start: $($_.Exception.Message)"
+            # You might want to fail the job here if the service doesn't start
+            exit 1
+          }
+           
+          
+      - name: Start IIS App Pool (SharedProd)
+        shell: powershell
+        run: |
+          Import-Module WebAdministration
+          Start-WebAppPool -Name "bmm-inboundops-api"
