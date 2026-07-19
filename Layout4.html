@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PulseLedger - Enterprise Expense & Group Tracking with PulseAI</title>
+    <!-- Tailwind CSS with Dark Mode Class Support -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- PrimeIcons for exact Iconography -->
+    <link rel="stylesheet" href="https://unpkg.com/primeicons/primeicons.css">
+    <!-- Chart.js for visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+        .glass-header { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(8px); }
+        .dark .glass-header { background: rgba(15, 23, 42, 0.85); }
+        .page-content { display: none; }
+        .page-content.active { display: block; animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        /* Toggle Switch CSS */
+        .toggle-checkbox:checked { right: 0; border-color: #6366f1; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #6366f1; }
+        /* AI Glow Animation */
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(99, 102, 241, 0.4), 0 0 30px rgba(168, 85, 247, 0.2); }
+            50% { box-shadow: 0 0 25px rgba(99, 102, 241, 0.7), 0 0 45px rgba(168, 85, 247, 0.4); }
+        }
+        .ai-glow { animation: pulseGlow 3s infinite; }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { 50: '#eef2ff', 100: '#e0e7ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 antialiased h-screen overflow-hidden transition-colors duration-200">
+
+    <!-- ==========================================
+         LOGIN / AUTHENTICATION SCREEN
+    =========================================== -->
+    <div id="auth-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 backdrop-blur-md p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden p-6 sm:p-8 space-y-6">
+            <div class="text-center space-y-2">
+                <div class="w-12 h-12 rounded-xl bg-primary-600 flex items-center justify-center text-white shadow-lg shadow-primary-500/30 mx-auto">
+                    <i class="pi pi-wallet text-2xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Welcome to Pulse<span class="text-primary-600 dark:text-primary-400">Ledger</span></h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Enter your credentials to access your financial workspace</p>
+            </div>
+
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">Email Address</label>
+                    <div class="relative">
+                        <i class="pi pi-envelope absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <input type="email" value="alex.morgan@company.com" required
+                            class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/40 text-slate-900 dark:text-white transition">
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">Password</label>
+                        <a href="#" class="text-xs text-primary-600 dark:text-primary-400 hover:underline">Forgot?</a>
+                    </div>
+                    <div class="relative">
+                        <i class="pi pi-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <input type="password" value="••••••••••••" required
+                            class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/40 text-slate-900 dark:text-white transition">
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between text-xs">
+                    <label class="flex items-center gap-2 cursor-pointer text-slate-600 dark:text-slate-400">
+                        <input type="checkbox" checked class="rounded border-slate-300 text-primary-600 focus:ring-primary-500">
+                        <span>Remember this device</span>
+                    </label>
+                    <span class="text-emerald-600 font-medium flex items-center gap-1"><i class="pi pi-shield text-[10px]"></i> 2FA Verified</span>
+                </div>
+
+                <button type="submit" class="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 rounded-xl shadow-lg shadow-primary-500/30 transition active:scale-[0.99] flex items-center justify-center gap-2 text-sm">
+                    <span>Sign In to Dashboard</span>
+                    <i class="pi pi-arrow-right text-xs"></i>
+                </button>
+            </form>
+
+            <div class="pt-4 border-t border-slate-100 dark:border-slate-800 text-center">
+                <p class="text-xs text-slate-500 dark:text-slate-400">Don't have an enterprise account? <a href="#" class="text-primary-600 dark:text-primary-400 font-semibold hover:underline">Contact IT Admin</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         MAIN APPLICATION WORKSPACE (Hidden initially)
+    =========================================== -->
+    <div id="app-workspace" class="flex h-screen overflow-hidden w-full opacity-0 pointer-events-none transition-opacity duration-300">
+        
+        <!-- MOBILE SIDEBAR BACKDROP -->
+        <div id="sidebar-backdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-30 hidden lg:hidden transition-opacity"></div>
+
+        <!-- LEFT SIDEBAR -->
+        <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-40 w-72 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col shadow-2xl lg:shadow-sm flex-shrink-0 transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0">
+            <div class="h-16 flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-lg bg-primary-600 flex items-center justify-center text-white shadow-md shadow-primary-500/30">
+                        <i class="pi pi-wallet text-xl"></i>
+                    </div>
+                    <span class="font-bold text-lg tracking-tight text-slate-900 dark:text-white">Pulse<span class="text-primary-600 dark:text-primary-400">Ledger</span></span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-[10px] font-semibold uppercase tracking-wider bg-primary-50 dark:bg-primary-900/40 text-primary-600 dark:text-primary-300 px-2 py-0.5 rounded border border-primary-100 dark:border-primary-800">v24 AI</span>
+                    <button onclick="toggleSidebar()" class="lg:hidden p-1 text-slate-500 hover:text-slate-800 dark:hover:text-white"><i class="pi pi-times text-base"></i></button>
+                </div>
+            </div>
+
+            <nav class="flex-1 overflow-y-auto p-4 space-y-1 text-sm font-medium">
+                <button onclick="switchPage('dashboard', this)" class="nav-btn active w-full flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 font-semibold transition text-left">
+                    <i class="pi pi-th-large text-base"></i>
+                    <span>Dashboard</span>
+                </button>
+
+                <!-- Master Create Suite -->
+                <button onclick="switchPage('master-create', this)" class="nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60 font-semibold transition text-left">
+                    <div class="flex items-center gap-3">
+                        <i class="pi pi-sliders-h text-base text-primary-500"></i>
+                        <span>Master Create Suite</span>
+                    </div>
+                    <span class="bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300 px-1.5 py-0.2 rounded text-[10px] uppercase font-bold">New</span>
+                </button>
+
+                <div class="pt-2">
+                    <button onclick="toggleMenu('sub-personal', 'icon-personal')" class="w-full flex items-center justify-between px-3 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/60 rounded-lg transition">
+                        <div class="flex items-center gap-3">
+                            <i class="pi pi-credit-card"></i>
+                            <span>Personal Finance</span>
+                        </div>
+                        <i id="icon-personal" class="pi pi-angle-down text-xs transition-transform duration-200"></i>
+                    </button>
+                    <div id="sub-personal" class="pl-4 pr-1 space-y-1 mt-1 border-l-2 border-slate-100 dark:border-slate-800 ml-5">
+                        <button onclick="switchPage('expenses', this)" class="nav-btn w-full text-left block px-3 py-1.5 text-xs text-slate-600 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 rounded-md transition">All Expenses & Bills</button>
+                        <button onclick="switchPage('expenses', this)" class="nav-btn w-full text-left block px-3 py-1.5 text-xs text-slate-600 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 rounded-md transition">Recurring Rules</button>
+                    </div>
+                </div>
+
+                <div class="pt-1">
+                    <button onclick="toggleMenu('sub-groups', 'icon-groups')" class="w-full flex items-center justify-between px-3 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/60 rounded-lg transition">
+                        <div class="flex items-center gap-3">
+                            <i class="pi pi-users"></i>
+                            <span>Groups & Sharing</span>
+                        </div>
+                        <i id="icon-groups" class="pi pi-angle-down text-xs transition-transform duration-200"></i>
+                    </button>
+                    <div id="sub-groups" class="pl-4 pr-1 space-y-1 mt-1 border-l-2 border-slate-100 dark:border-slate-800 ml-5">
+                        <button onclick="switchPage('groups', this)" class="nav-btn w-full flex items-center justify-between px-3 py-1.5 text-xs text-slate-600 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 rounded-md transition text-left">
+                            <span>Active Teams & Trips</span>
+                            <span class="bg-primary-100 dark:bg-primary-900/60 text-primary-700 dark:text-primary-300 px-1.5 py-0.2 rounded-[4px] text-[10px]">3</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="pt-1">
+                    <button onclick="switchPage('reports', this)" class="nav-btn w-full flex items-center gap-3 px-3 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/60 rounded-lg transition text-left">
+                        <i class="pi pi-chart-bar"></i>
+                        <span>Analytics & Reports</span>
+                    </button>
+                </div>
+            </nav>
+
+            <div class="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                    <span class="text-xs text-slate-600 dark:text-slate-400 font-medium">Synced with Cloud</span>
+                </div>
+                <button onclick="logout()" title="Sign Out" class="text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/20 p-1.5 rounded-lg transition"><i class="pi pi-power-off text-sm"></i></button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <div class="flex-1 flex flex-col h-screen overflow-hidden w-full relative">
+            
+            <!-- TOP MENU BAR -->
+            <header class="h-16 glass-header border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4 sm:px-6 z-10 flex-shrink-0 gap-3">
+                <div class="flex items-center gap-3 flex-1 max-w-md">
+                    <button onclick="toggleSidebar()" class="lg:hidden p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition" title="Open Menu">
+                        <i class="pi pi-bars text-lg"></i>
+                    </button>
+
+                    <div class="relative w-full">
+                        <i class="pi pi-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs sm:text-sm"></i>
+                        <input type="text" placeholder="Search transactions, bills, tags..." 
+                            class="w-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200/60 dark:hover:bg-slate-700/60 focus:bg-white dark:focus:bg-slate-900 text-xs sm:text-sm pl-9 pr-4 py-1.5 sm:py-2 rounded-xl border border-transparent focus:border-primary-500 focus:outline-none transition text-slate-800 dark:text-white placeholder-slate-400">
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                    <!-- Quick AI Header Trigger -->
+                    <button onclick="toggleAiChat()" class="hidden md:flex items-center gap-1.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white px-3 py-1.5 rounded-full text-xs font-semibold shadow-sm hover:opacity-95 transition">
+                        <i class="pi pi-sparkles text-[11px] animate-spin"></i>
+                        <span>Ask PulseAI</span>
+                    </button>
+
+                    <button onclick="toggleTheme()" class="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition" title="Toggle Mode">
+                        <i id="theme-icon" class="pi pi-moon text-base"></i>
+                    </button>
+
+                    <div class="h-5 w-px bg-slate-200 dark:bg-slate-700 mx-1 hidden sm:block"></div>
+
+                    <button onclick="switchPage('master-create')" class="bg-primary-600 hover:bg-primary-700 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl font-semibold text-xs sm:text-sm flex items-center gap-2 shadow-sm shadow-primary-500/30 transition active:scale-95">
+                        <i class="pi pi-plus text-xs"></i>
+                        <span class="hidden sm:inline">Create Entry</span>
+                    </button>
+
+                    <!-- User Profile Dropdown -->
+                    <div class="relative ml-1">
+                        <button onclick="toggleMenu('profile-menu')" class="flex items-center gap-2.5 p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar" class="w-8 h-8 rounded-full object-cover border border-slate-200 dark:border-slate-700">
+                            <span class="text-xs font-semibold text-slate-800 dark:text-white hidden md:inline">Alex Morgan</span>
+                            <i class="pi pi-angle-down text-xs text-slate-500 pr-1 hidden sm:inline"></i>
+                        </button>
+                        <div id="profile-menu" class="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-slate-200 dark:border-slate-800 py-1 hidden z-30 text-sm">
+                            <div class="px-4 py-2 border-b border-slate-100 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400">Signed in as <strong class="text-slate-800 dark:text-white block truncate">alex.m@company.com</strong></div>
+                            <a href="#" onclick="logout()" class="flex items-center gap-2 px-4 py-2 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition font-medium"><i class="pi pi-power-off text-xs"></i> Log Out</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- PAGE CONTENT VIEWS -->
+            <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8 bg-slate-100 dark:bg-slate-950 transition-colors duration-200">
+                
+                <!-- PAGE 1: DASHBOARD -->
+                <div id="page-dashboard" class="page-content active space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div>
+                            <h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Financial Overview</h1>
+                            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-0.5">Consolidated spending, group split receivables, and credit utilization.</p>
+                        </div>
+                        <div class="flex items-center gap-2 bg-white dark:bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-xs font-medium text-slate-600 dark:text-slate-400 shadow-sm self-start sm:self-auto">
+                            <i class="pi pi-calendar text-primary-600 dark:text-primary-400"></i>
+                            <span>Current Cycle: July 2026</span>
+                        </div>
+                    </div>
+
+                    <!-- KPI Summary Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+                        <div class="bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                            <div class="flex justify-between items-start">
+                                <div><span class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Net Balance</span><div class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mt-1.5 sm:mt-2">₹ 1,42,500</div></div>
+                                <div class="w-10 h-10 rounded-lg bg-primary-50 dark:bg-primary-900/40 flex items-center justify-center text-primary-600 dark:text-primary-400"><i class="pi pi-wallet text-lg"></i></div>
+                            </div>
+                            <div class="mt-3 sm:mt-4 flex items-center gap-1.5 text-xs text-emerald-600 font-medium"><i class="pi pi-arrow-up text-[10px]"></i><span>+12.4%</span><span class="text-slate-500 dark:text-slate-400 font-normal">from last month</span></div>
+                        </div>
+
+                        <div class="bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                            <div class="flex justify-between items-start">
+                                <div><span class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">You Are Owed</span><div class="text-xl sm:text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-1.5 sm:mt-2">₹ 18,450</div></div>
+                                <div class="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400"><i class="pi pi-arrow-down-left text-lg"></i></div>
+                            </div>
+                            <div class="mt-3 sm:mt-4 text-xs text-slate-500 dark:text-slate-400">Across <strong class="text-slate-800 dark:text-slate-200">3 active groups</strong></div>
+                        </div>
+
+                        <div class="bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                            <div class="flex justify-between items-start">
+                                <div><span class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">You Owe</span><div class="text-xl sm:text-2xl font-bold text-rose-600 dark:text-rose-400 mt-1.5 sm:mt-2">₹ 6,200</div></div>
+                                <div class="w-10 h-10 rounded-lg bg-rose-50 dark:bg-rose-900/30 flex items-center justify-center text-rose-600 dark:text-rose-400"><i class="pi pi-arrow-up-right text-lg"></i></div>
+                            </div>
+                            <div class="mt-3 sm:mt-4 text-xs text-rose-600 dark:text-rose-400 font-medium cursor-pointer hover:underline" onclick="switchPage('groups')">Settle 2 pending splits &rarr;</div>
+                        </div>
+
+                        <div class="bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                            <div class="flex justify-between items-start">
+                                <div><span class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Credit Utilization</span><div class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mt-1.5 sm:mt-2">28.4%</div></div>
+                                <div class="w-10 h-10 rounded-lg bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400"><i class="pi pi-credit-card text-lg"></i></div>
+                            </div>
+                            <div class="mt-3 sm:mt-4 w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden"><div class="bg-amber-500 h-full rounded-full" style="width: 28.4%"></div></div>
+                            <div class="mt-1.5 flex justify-between text-[11px] text-slate-500 dark:text-slate-400"><span>₹ 85.2k used</span><span>₹ 300k limit</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Section -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm lg:col-span-2 flex flex-col justify-between">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                                <div><h3 class="text-base font-bold text-slate-800 dark:text-white">Cash Flow Trend</h3><p class="text-xs text-slate-500 dark:text-slate-400">Monthly comparison of personal vs. shared expenses</p></div>
+                                <div class="flex items-center gap-3 text-xs font-medium text-slate-600 dark:text-slate-300 self-start sm:self-auto">
+                                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-primary-600 inline-block"></span>Personal</span>
+                                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-sky-400 inline-block"></span>Group Share</span>
+                                </div>
+                            </div>
+                            <div class="h-56 sm:h-64 w-full"><canvas id="barChart"></canvas></div>
+                        </div>
+
+                        <div class="bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                            <div class="mb-4"><h3 class="text-base font-bold text-slate-800 dark:text-white">Expense Breakdown</h3><p class="text-xs text-slate-500 dark:text-slate-400">Top spending categories this month</p></div>
+                            <div class="h-48 sm:h-52 w-full flex items-center justify-center relative">
+                                <canvas id="doughnutChart"></canvas>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                                    <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Total Spent</span>
+                                    <span class="text-base font-bold text-slate-800 dark:text-white">₹ 48,200</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PAGE 2: MASTER CREATE SUITE -->
+                <div id="page-master-create" class="page-content space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div>
+                            <h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Master Entry Suite</h1>
+                            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-0.5">Comprehensive form control dashboard featuring every available input parameter.</p>
+                        </div>
+                        <button onclick="alert('Form reset to default parameters!')" class="px-3 py-1.5 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-semibold hover:bg-slate-300 transition self-start sm:self-auto">Reset Fields</button>
+                    </div>
+
+                    <form onsubmit="handleMasterSubmit(event)" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+                        <div class="p-6 sm:p-8 space-y-8 divide-y divide-slate-100 dark:divide-slate-800/80">
+                            <!-- Section 1 -->
+                            <div class="space-y-4">
+                                <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <span class="w-6 h-6 rounded-md bg-primary-50 dark:bg-primary-900/40 text-primary-600 flex items-center justify-center text-xs">1</span>
+                                    <span>Core Identification & Amounts</span>
+                                </h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1.5">Entity / Merchant Name *</label>
+                                        <input type="text" placeholder="e.g. Apple Store India" required class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500/40 focus:outline-none">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1.5">Amount (INR) *</label>
+                                        <div class="relative">
+                                            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">₹</span>
+                                            <input type="number" step="0.01" placeholder="0.00" required class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl pl-8 pr-3.5 py-2.5 text-sm text-slate-900 dark:text-white font-semibold focus:ring-2 focus:ring-primary-500/40 focus:outline-none">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1.5">Transaction Date & Time</label>
+                                        <input type="datetime-local" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500/40 focus:outline-none">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Section 2 -->
+                            <div class="pt-6 space-y-4">
+                                <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <span class="w-6 h-6 rounded-md bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 flex items-center justify-center text-xs">2</span>
+                                    <span>Categorization & Payment Source</span>
+                                </h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1.5">Primary Category (Select)</label>
+                                        <select class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500/40 focus:outline-none">
+                                            <option>Housing & Utilities</option><option>Food & Dining</option><option>Travel & Mileage</option><option>Hardware & Tech</option><option>Professional Fees</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-2">Payment Instrument (Radio Group)</label>
+                                        <div class="grid grid-cols-3 gap-2">
+                                            <label class="border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 flex items-center gap-2 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-medium">
+                                                <input type="radio" name="pay_mode" checked class="text-primary-600 focus:ring-primary-500"><span>Corporate CC</span>
+                                            </label>
+                                            <label class="border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 flex items-center gap-2 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-medium">
+                                                <input type="radio" name="pay_mode" class="text-primary-600 focus:ring-primary-500"><span>Direct Bank</span>
+                                            </label>
+                                            <label class="border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 flex items-center gap-2 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-medium">
+                                                <input type="radio" name="pay_mode" class="text-primary-600 focus:ring-primary-500"><span>Petty Cash</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Section 3 -->
+                            <div class="pt-6 space-y-4">
+                                <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <span class="w-6 h-6 rounded-md bg-amber-50 dark:bg-amber-900/40 text-amber-600 flex items-center justify-center text-xs">3</span>
+                                    <span>Rules, Tax & Split Parameters</span>
+                                </h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 items-center">
+                                    <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                                        <div><span class="text-xs font-bold text-slate-800 dark:text-white block">Tax Deductible?</span><span class="text-[11px] text-slate-500 dark:text-slate-400">Flag for GSTIN claims</span></div>
+                                        <div class="relative inline-block w-10 mr-2 align-middle select-none">
+                                            <input type="checkbox" id="tax_toggle" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-slate-300 transition-all duration-200" />
+                                            <label for="tax_toggle" class="toggle-label block overflow-hidden h-5 rounded-full bg-slate-300 cursor-pointer"></label>
+                                        </div>
+                                    </div>
+
+                                    <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700 space-y-1">
+                                        <div class="flex justify-between text-xs font-bold"><span>Reimbursement Share</span><span id="slider-val" class="text-primary-600">50%</span></div>
+                                        <input type="range" min="0" max="100" value="50" oninput="document.getElementById('slider-val').innerText = this.value + '%'"
+                                            class="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-primary-600">
+                                    </div>
+
+                                    <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
+                                        <span class="text-xs font-bold text-slate-800 dark:text-white block">Notify Group Members</span>
+                                        <div class="flex items-center gap-4 text-xs">
+                                            <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" checked class="rounded text-primary-600 focus:ring-0"><span>Email</span></label>
+                                            <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" checked class="rounded text-primary-600 focus:ring-0"><span>Push Alert</span></label>
+                                            <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" class="rounded text-primary-600 focus:ring-0"><span>SMS</span></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Section 4 -->
+                            <div class="pt-6 space-y-4">
+                                <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <span class="w-6 h-6 rounded-md bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 flex items-center justify-center text-xs">4</span>
+                                    <span>Documentation & Attachments</span>
+                                </h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1.5">Meta Tags (Multi-Select Pills)</label>
+                                            <div class="flex flex-wrap gap-1.5 p-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl min-h-[42px] items-center">
+                                                <span class="bg-primary-100 dark:bg-primary-900/60 text-primary-700 dark:text-primary-300 px-2 py-0.5 rounded-md text-xs font-medium flex items-center gap-1">#Q3-Budget <i class="pi pi-times cursor-pointer text-[10px]"></i></span>
+                                                <span class="bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 px-2 py-0.5 rounded-md text-xs font-medium flex items-center gap-1">#Client-Billable <i class="pi pi-times cursor-pointer text-[10px]"></i></span>
+                                                <input type="text" placeholder="+ Add tag..." class="bg-transparent text-xs focus:outline-none px-1 py-0.5 text-slate-800 dark:text-white flex-1 min-w-[80px]">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1.5">Extended Notes (Textarea)</label>
+                                            <textarea rows="3" placeholder="Provide additional audit justifications..." class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500/40 focus:outline-none"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1.5">Receipt Attachment (File Upload)</label>
+                                        <div class="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-primary-500 rounded-2xl p-6 flex flex-col items-center justify-center text-center bg-slate-50/50 dark:bg-slate-800/30 cursor-pointer transition h-[178px]">
+                                            <i class="pi pi-cloud-upload text-3xl text-primary-500 mb-2"></i>
+                                            <span class="text-xs font-bold text-slate-800 dark:text-white block">Click to upload or drag receipt here</span>
+                                            <span class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Supports PDF, PNG, JPG up to 15MB</span>
+                                            <input type="file" class="hidden">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-6 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                            <span class="text-xs text-slate-500 dark:text-slate-400">* Required validation parameters</span>
+                            <div class="flex items-center gap-3">
+                                <button type="button" onclick="switchPage('dashboard')" class="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">Discard</button>
+                                <button type="submit" class="px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-semibold shadow-lg shadow-primary-500/30 transition active:scale-95 flex items-center gap-2">
+                                    <i class="pi pi-check text-xs"></i><span>Commit Record</span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- PAGE 3: EXPENSES & BILLS -->
+                <div id="page-expenses" class="page-content space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div><h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">All Expenses & Bills</h1><p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-0.5">Manage personal spending, filter by tags, and attach receipts.</p></div>
+                        <button onclick="switchPage('master-create')" class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg font-semibold text-sm flex items-center gap-2 shadow-sm self-start sm:self-auto"><i class="pi pi-plus text-xs"></i><span>Record Transaction</span></button>
+                    </div>
+                    <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm min-w-[640px]">
+                                <thead class="bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 uppercase text-[11px] font-semibold border-b border-slate-200 dark:border-slate-800">
+                                    <tr><th class="py-3 px-4">Date</th><th class="py-3 px-4">Merchant</th><th class="py-3 px-4">Category</th><th class="py-3 px-4 text-right">Amount</th><th class="py-3 px-4 text-center">Receipt</th></tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300">
+                                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30"><td class="py-3.5 px-4 text-xs text-slate-500">Jul 18, 2026</td><td class="py-3.5 px-4 font-semibold text-slate-800 dark:text-white">Starbucks Coffee - Airport</td><td class="py-3.5 px-4"><span class="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 px-2 py-0.5 rounded text-xs font-medium border border-emerald-100 dark:border-emerald-800">Food & Dining</span></td><td class="py-3.5 px-4 text-right font-bold">₹ 650</td><td class="py-3.5 px-4 text-center"><i class="pi pi-file-pdf text-rose-500 cursor-pointer"></i></td></tr>
+                                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30"><td class="py-3.5 px-4 text-xs text-slate-500">Jul 15, 2026</td><td class="py-3.5 px-4 font-semibold text-slate-800 dark:text-white">Apartment Maintenance Bill</td><td class="py-3.5 px-4"><span class="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded text-xs font-medium border border-indigo-100 dark:border-indigo-800">Housing</span></td><td class="py-3.5 px-4 text-right font-bold">₹ 4,500</td><td class="py-3.5 px-4 text-center"><i class="pi pi-image text-primary-500 cursor-pointer"></i></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PAGE 4: GROUPS & SHARING -->
+                <div id="page-groups" class="page-content space-y-6">
+                    <div><h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Active Groups & Teams</h1><p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-0.5">Manage team expenses, travel balances, and automated debt simplification.</p></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 flex flex-col justify-between shadow-sm">
+                            <div><span class="bg-sky-50 dark:bg-sky-900/40 text-sky-600 dark:text-sky-300 text-xs font-semibold px-2.5 py-0.5 rounded">Office Team</span><h3 class="text-lg font-bold text-slate-900 dark:text-white mt-3">Mahathi Lead Developers</h3><div class="my-4 py-3 border-y border-slate-100 dark:border-slate-800 flex justify-between"><span class="text-xs text-slate-500">Your overall balance:</span><span class="text-base font-bold text-emerald-600">+ ₹ 2,150</span></div></div>
+                            <button class="text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-3 py-2 rounded-lg w-full">View Group Ledger</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PAGE 5: REPORTS -->
+                <div id="page-reports" class="page-content space-y-6">
+                    <div><h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Analytics & Reports</h1><p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-0.5">Deep-dive financial analytics, tax summaries, and export capabilities.</p></div>
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm"><h3 class="font-bold mb-4">Spending vs. Savings YTD</h3><div class="h-64 w-full"><canvas id="analyticsChart"></canvas></div></div>
+                </div>
+
+            </main>
+
+            <!-- ==========================================
+                 ADVANCED MOBILE BOTTOM MENU (Docked)
+            =========================================== -->
+            <nav id="mobile-bottom-nav" class="fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 lg:hidden px-3 py-2 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] transition-all">
+                <div class="flex items-center justify-around max-w-md mx-auto relative">
+                    <button onclick="switchPage('dashboard', this, 'mob')" class="mob-tab-btn active flex flex-col items-center gap-1 py-1 px-3 text-primary-600 dark:text-primary-400 transition">
+                        <i class="pi pi-th-large text-lg"></i><span class="text-[10px] font-semibold">Home</span>
+                    </button>
+                    <button onclick="switchPage('expenses', this, 'mob')" class="mob-tab-btn flex flex-col items-center gap-1 py-1 px-3 text-slate-500 dark:text-slate-400 hover:text-primary-600 transition">
+                        <i class="pi pi-credit-card text-lg"></i><span class="text-[10px] font-semibold">Bills</span>
+                    </button>
+                    <div class="relative -mt-7 flex flex-col items-center">
+                        <button onclick="switchPage('master-create')" title="Master Create" class="w-13 h-13 bg-primary-600 hover:bg-primary-700 text-white rounded-full shadow-lg shadow-primary-500/40 flex items-center justify-center p-3.5 transform transition active:scale-90 border-4 border-slate-100 dark:border-slate-950">
+                            <i class="pi pi-plus text-lg font-bold"></i>
+                        </button>
+                        <span class="text-[10px] font-bold text-primary-600 dark:text-primary-400 mt-1">Create</span>
+                    </div>
+                    <button onclick="switchPage('groups', this, 'mob')" class="mob-tab-btn flex flex-col items-center gap-1 py-1 px-3 text-slate-500 dark:text-slate-400 hover:text-primary-600 transition">
+                        <i class="pi pi-users text-lg"></i><span class="text-[10px] font-semibold">Groups</span>
+                    </button>
+                    <button onclick="switchPage('reports', this, 'mob')" class="mob-tab-btn flex flex-col items-center gap-1 py-1 px-3 text-slate-500 dark:text-slate-400 hover:text-primary-600 transition">
+                        <i class="pi pi-chart-bar text-lg"></i><span class="text-[10px] font-semibold">Reports</span>
+                    </button>
+                </div>
+            </nav>
+
+            <!-- ==========================================
+                 PULSE-AI FLOATING BUTTON (Positioned cleanly above iOS Dock on mobile)
+            =========================================== -->
+            <button id="ai-floating-btn" onclick="toggleAiChat()" title="Ask PulseAI Financial Assistant"
+                class="fixed bottom-20 right-4 lg:bottom-8 lg:right-8 z-50 ai-glow bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 hover:from-indigo-700 hover:to-pink-600 text-white p-3.5 sm:p-4 rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 group">
+                <i class="pi pi-sparkles text-xl sm:text-2xl transition-transform duration-500 group-hover:rotate-180"></i>
+                <span class="absolute -top-1 -right-1 bg-emerald-500 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded-full border-2 border-white dark:border-slate-900 animate-bounce">AI</span>
+            </button>
+
+            <!-- ==========================================
+                 PULSE-AI INTERACTIVE CHAT DIALOG (With All Possible Options)
+            =========================================== -->
+            <div id="ai-chat-dialog" class="fixed bottom-36 right-4 lg:bottom-24 lg:right-8 z-50 w-[92vw] sm:w-[440px] max-w-full h-[580px] max-h-[75vh] bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden transition-all duration-300 origin-bottom-right scale-0 opacity-0 pointer-events-none">
+                
+                <!-- AI Header with Persona Settings -->
+                <div class="px-4 py-3 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white flex items-center justify-between border-b border-slate-800 flex-shrink-0">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-500 to-pink-500 flex items-center justify-center shadow-md">
+                            <i class="pi pi-sparkles text-sm font-bold animate-pulse"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="font-bold text-sm tracking-tight">PulseAI Copilot</span>
+                                <span class="bg-emerald-500/20 text-emerald-400 text-[10px] px-1.5 py-0.2 rounded font-semibold border border-emerald-500/30">Online</span>
+                            </div>
+                            <span class="text-[10px] text-slate-400 block">GPT-4o Enterprise Financial Model</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <button onclick="clearAiChat()" title="Reset Conversation" class="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-white/10 transition"><i class="pi pi-trash text-xs"></i></button>
+                        <button onclick="toggleFullscreenAi()" title="Expand Size" class="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-white/10 transition hidden sm:block"><i class="pi pi-window-maximize text-xs"></i></button>
+                        <button onclick="toggleAiChat()" title="Close Window" class="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-white/10 transition ml-1"><i class="pi pi-times text-sm"></i></button>
+                    </div>
+                </div>
+
+                <!-- AI Scope & Mode Selector (All Possible Controls) -->
+                <div class="px-3 py-2 bg-slate-100 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 text-xs flex-shrink-0">
+                    <div class="flex items-center gap-1.5 min-w-0">
+                        <i class="pi pi-filter text-indigo-500 text-[11px]"></i>
+                        <span class="text-slate-500 dark:text-slate-400 font-medium whitespace-nowrap">Scope:</span>
+                        <select id="ai-scope" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md px-2 py-0.5 font-semibold text-slate-800 dark:text-white text-xs focus:outline-none">
+                            <option>All Workspace Data</option>
+                            <option>Current Cycle (July 2026)</option>
+                            <option>Group Splits & Team Debts</option>
+                            <option>Tax Deductible Flagged Only</option>
+                        </select>
+                    </div>
+                    <span class="text-[10px] bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 px-1.5 py-0.5 rounded border border-indigo-200 dark:border-indigo-800 font-bold hidden sm:inline">Auditor Mode</span>
+                </div>
+
+                <!-- Message History Feed -->
+                <div id="ai-messages" class="flex-1 overflow-y-auto p-4 space-y-4 text-sm bg-slate-50/50 dark:bg-slate-950/50">
+                    
+                    <!-- AI Welcome Message with Quick Prompt Chips -->
+                    <div class="flex items-start gap-3">
+                        <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-indigo-500 to-pink-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0 shadow-sm mt-0.5">AI</div>
+                        <div class="space-y-2.5 max-w-[85%]">
+                            <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl rounded-tl-none border border-slate-200 dark:border-slate-800 shadow-sm text-slate-800 dark:text-slate-200 space-y-2">
+                                <p class="font-medium">Hello Alex! 👋 I'm your automated financial intelligence partner.</p>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">I can analyze your spending anomalies, simplify team debt ledgers, or draft audit summaries. What would you like to explore today?</p>
+                            </div>
+
+                            <!-- Interactive Starter Chips -->
+                            <div class="flex flex-wrap gap-1.5">
+                                <button onclick="usePromptChip('Analyze my July dining expenses')" class="text-xs bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 text-indigo-700 dark:text-indigo-300 px-2.5 py-1 rounded-lg border border-indigo-200/60 dark:border-indigo-800 transition text-left flex items-center gap-1">
+                                    <span>📊 Dining spending trend</span>
+                                </button>
+                                <button onclick="usePromptChip('Who owes me money across all groups?')" class="text-xs bg-emerald-50 dark:bg-emerald-900/30 hover:bg-emerald-100 text-emerald-700 dark:text-emerald-300 px-2.5 py-1 rounded-lg border border-emerald-200/60 dark:border-emerald-800 transition text-left flex items-center gap-1">
+                                    <span>💰 Group receivables</span>
+                                </button>
+                                <button onclick="usePromptChip('Summarize tax deductible items for Q3')" class="text-xs bg-amber-50 dark:bg-amber-900/30 hover:bg-amber-100 text-amber-700 dark:text-amber-300 px-2.5 py-1 rounded-lg border border-amber-200/60 dark:border-amber-800 transition text-left flex items-center gap-1">
+                                    <span>📑 Q3 Tax audit summary</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Simulated Pre-existing Rich Response -->
+                    <div class="flex items-start gap-3">
+                        <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-indigo-500 to-pink-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0 shadow-sm mt-0.5">AI</div>
+                        <div class="space-y-2 max-w-[88%]">
+                            <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl rounded-tl-none border border-slate-200 dark:border-slate-800 shadow-sm text-slate-800 dark:text-slate-200 space-y-2.5 text-xs">
+                                <div class="font-bold flex items-center justify-between text-indigo-600 dark:text-indigo-400">
+                                    <span>⚠️ Budget Anomaly Detected</span>
+                                    <span class="text-[10px] bg-rose-100 dark:bg-rose-900/60 text-rose-700 dark:text-rose-300 px-1.5 py-0.2 rounded font-bold">+24% vs Avg</span>
+                                </div>
+                                <p>Your **Food & Dining** category reached **₹ 12,150** this week, primarily driven by 2 major team lunches.</p>
+                                
+                                <!-- Rich Table Output Inside Chat -->
+                                <div class="border border-slate-200 dark:border-slate-800 rounded-lg overflow-hidden bg-slate-50 dark:bg-slate-950/60">
+                                    <table class="w-full text-left text-[11px]">
+                                        <thead class="bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-semibold border-b border-slate-200 dark:border-slate-800">
+                                            <tr><th class="p-1.5 pl-2">Merchant</th><th class="p-1.5 text-right pr-2">Amount</th></tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                                            <tr><td class="p-1.5 pl-2 font-medium">Barbeque Nation (Team)</td><td class="p-1.5 text-right pr-2 font-bold text-slate-900 dark:text-white">₹ 8,400</td></tr>
+                                            <tr><td class="p-1.5 pl-2 font-medium">Starbucks Airport</td><td class="p-1.5 text-right pr-2 font-bold text-slate-900 dark:text-white">₹ 650</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="flex gap-1.5 pt-1">
+                                    <button onclick="switchPage('expenses')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 py-1 rounded font-semibold text-[11px] transition">View In Bills Ledger</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Feedback Footer -->
+                            <div class="flex items-center gap-3 pl-1 text-[11px] text-slate-400">
+                                <button onclick="alert('Response copied to clipboard!')" class="hover:text-slate-600 dark:hover:text-slate-200 flex items-center gap-1"><i class="pi pi-copy text-[10px]"></i> Copy</button>
+                                <button onclick="this.classList.toggle('text-emerald-500')" class="hover:text-emerald-500"><i class="pi pi-thumbs-up text-[10px]"></i></button>
+                                <button onclick="this.classList.toggle('text-rose-500')" class="hover:text-rose-500"><i class="pi pi-thumbs-down text-[10px]"></i></button>
+                                <span class="text-[10px] text-slate-400 ml-auto font-mono">130ms response</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- AI Input & Tool Area (All Possible Options) -->
+                <div class="p-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex-shrink-0 space-y-2">
+                    <form onsubmit="sendAiMessage(event)" class="relative flex items-center gap-1.5">
+                        
+                        <!-- Left Action triggers: Attach / Voice -->
+                        <div class="flex items-center gap-0.5">
+                            <button type="button" onclick="alert('Attachment Scanning: Select a bill photo or receipt PDF to parse automatically.')" title="Scan Receipt / File"
+                                class="p-2 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition">
+                                <i class="pi pi-paperclip text-sm"></i>
+                            </button>
+                            <button type="button" onclick="simulateVoiceInput()" title="Voice Dictation" id="ai-mic-btn"
+                                class="p-2 text-slate-400 hover:text-rose-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition">
+                                <i class="pi pi-microphone text-sm"></i>
+                            </button>
+                        </div>
+
+                        <!-- Main Textarea / Input -->
+                        <input type="text" id="ai-input" placeholder="Ask PulseAI anything or type '/' for commands..." required
+                            class="flex-1 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-indigo-500 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:bg-white dark:focus:bg-slate-900 transition placeholder-slate-400">
+
+                        <!-- Send Button -->
+                        <button type="submit" class="bg-gradient-to-tr from-indigo-600 to-pink-500 hover:opacity-95 text-white p-2 sm:px-3 sm:py-2 rounded-xl text-xs font-semibold shadow-md flex items-center justify-center gap-1 transition active:scale-95">
+                            <i class="pi pi-send text-xs"></i>
+                            <span class="hidden sm:inline">Send</span>
+                        </button>
+                    </form>
+                    
+                    <div class="flex items-center justify-between px-1 text-[10px] text-slate-400">
+                        <div class="flex items-center gap-2">
+                            <span class="hover:underline cursor-pointer" onclick="document.getElementById('ai-input').value='/report '">/report</span>
+                            <span class="hover:underline cursor-pointer" onclick="document.getElementById('ai-input').value='/settle '">/settle</span>
+                            <span class="hover:underline cursor-pointer" onclick="document.getElementById('ai-input').value='/forecast '">/forecast</span>
+                        </div>
+                        <span>PulseAI can make mistakes. Verify critical financial data.</span>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- APPLICATION & AI LOGIC -->
+    <script>
+        // 1. Authentication State Handlers
+        function handleLogin(e) {
+            e.preventDefault();
+            const authScreen = document.getElementById('auth-screen');
+            const appWorkspace = document.getElementById('app-workspace');
+            
+            authScreen.classList.add('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                authScreen.style.display = 'none';
+                appWorkspace.classList.remove('opacity-0', 'pointer-events-none');
+                initCharts();
+            }, 300);
+        }
+
+        function logout() {
+            const authScreen = document.getElementById('auth-screen');
+            const appWorkspace = document.getElementById('app-workspace');
+            
+            appWorkspace.classList.add('opacity-0', 'pointer-events-none');
+            authScreen.style.display = 'flex';
+            setTimeout(() => {
+                authScreen.classList.remove('opacity-0', 'pointer-events-none');
+            }, 50);
+        }
+
+        // 2. Navigation & Page Router
+        function switchPage(pageId, btnElement, source = 'desk') {
+            document.querySelectorAll('.page-content').forEach(el => el.classList.remove('active'));
+            const target = document.getElementById('page-' + pageId);
+            if (target) target.classList.add('active');
+
+            if (source === 'desk' && btnElement && btnElement.classList.contains('nav-btn')) {
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    btn.classList.remove('active', 'bg-primary-50', 'dark:bg-primary-900/30', 'text-primary-600', 'dark:text-primary-400');
+                    btn.classList.add('text-slate-600', 'dark:text-slate-400');
+                });
+                btnElement.classList.add('active', 'bg-primary-50', 'dark:bg-primary-900/30', 'text-primary-600', 'dark:text-primary-400');
+            }
+
+            if (source === 'mob' && btnElement) {
+                document.querySelectorAll('.mob-tab-btn').forEach(btn => {
+                    btn.classList.remove('active', 'text-primary-600', 'dark:text-primary-400');
+                    btn.classList.add('text-slate-500', 'dark:text-slate-400');
+                });
+                btnElement.classList.add('active', 'text-primary-600', 'dark:text-primary-400');
+            }
+
+            if (window.innerWidth < 1024) {
+                const sidebar = document.getElementById('sidebar');
+                if (!sidebar.classList.contains('-translate-x-full')) toggleSidebar();
+            }
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            sidebar.classList.toggle('-translate-x-full');
+            backdrop.classList.toggle('hidden');
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            html.classList.toggle('dark');
+            icon.classList.toggle('pi-moon');
+            icon.classList.toggle('pi-sun');
+            updateChartsTheme();
+        }
+
+        function toggleMenu(id, iconId) {
+            const el = document.getElementById(id);
+            if (el) el.classList.toggle('hidden');
+            if (iconId) {
+                const icon = document.getElementById(iconId);
+                if (icon) {
+                    icon.classList.toggle('pi-angle-up');
+                    icon.classList.toggle('pi-angle-down');
+                }
+            }
+        }
+
+        function handleMasterSubmit(e) {
+            e.preventDefault();
+            alert('Master Entry successfully recorded with all parameters!');
+            switchPage('dashboard');
+        }
+
+        // ==========================================
+        // 3. PULSE-AI COPILOT CONTROLLER
+        // ==========================================
+        function toggleAiChat() {
+            const dialog = document.getElementById('ai-chat-dialog');
+            if (dialog.classList.contains('scale-0')) {
+                dialog.classList.remove('scale-0', 'opacity-0', 'pointer-events-none');
+                document.getElementById('ai-input').focus();
+            } else {
+                dialog.classList.add('scale-0', 'opacity-0', 'pointer-events-none');
+            }
+        }
+
+        function usePromptChip(text) {
+            document.getElementById('ai-input').value = text;
+            sendAiMessage({ preventDefault: () => {} });
+        }
+
+        function clearAiChat() {
+            const messagesEl = document.getElementById('ai-messages');
+            messagesEl.innerHTML = `
+                <div class="text-center py-6 text-xs text-slate-400">
+                    <i class="pi pi-refresh text-xl mb-1 block animate-spin"></i>
+                    <span>Conversation memory cleared. Ready for new inquiry.</span>
+                </div>
+            `;
+        }
+
+        function toggleFullscreenAi() {
+            const dialog = document.getElementById('ai-chat-dialog');
+            dialog.classList.toggle('sm:w-[440px]');
+            dialog.classList.toggle('sm:w-[700px]');
+            dialog.classList.toggle('h-[580px]');
+            dialog.classList.toggle('h-[85vh]');
+        }
+
+        function simulateVoiceInput() {
+            const btn = document.getElementById('ai-mic-btn');
+            const input = document.getElementById('ai-input');
+            btn.classList.add('text-rose-500', 'animate-pulse');
+            input.placeholder = "Listening... Speak your financial query now...";
+            
+            setTimeout(() => {
+                btn.classList.remove('text-rose-500', 'animate-pulse');
+                input.value = "What is my predicted credit card bill for next month?";
+                input.placeholder = "Ask PulseAI anything or type '/' for commands...";
+                sendAiMessage({ preventDefault: () => {} });
+            }, 2500);
+        }
+
+        function sendAiMessage(e) {
+            if(e && e.preventDefault) e.preventDefault();
+            const input = document.getElementById('ai-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const messagesEl = document.getElementById('ai-messages');
+            
+            // 1. Append User Message
+            messagesEl.innerHTML += `
+                <div class="flex items-start justify-end gap-2.5 animate-fadeIn">
+                    <div class="bg-primary-600 text-white p-3 rounded-2xl rounded-tr-none shadow-sm max-w-[80%] text-xs font-medium">
+                        ${text}
+                    </div>
+                </div>
+            `;
+            input.value = '';
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+
+            // 2. Append Typing Indicator
+            const typingId = 'typing-' + Date.now();
+            messagesEl.innerHTML += `
+                <div id="${typingId}" class="flex items-start gap-3 mt-3 animate-fadeIn">
+                    <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-indigo-500 to-pink-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">AI</div>
+                    <div class="bg-white dark:bg-slate-900 p-3 rounded-2xl rounded-tl-none border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-1.5 text-slate-400 text-xs">
+                        <span class="w-2 h-2 rounded-full bg-indigo-500 animate-ping"></span>
+                        <span>PulseAI is analyzing ledger records...</span>
+                    </div>
+                </div>
+            `;
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+
+            // 3. Simulate Intelligent AI Response
+            setTimeout(() => {
+                const typingEl = document.getElementById(typingId);
+                if (typingEl) typingEl.remove();
+
+                let replyHtml = '';
+                if (text.toLowerCase().includes('dining') || text.toLowerCase().includes('food') || text.toLowerCase().includes('spend')) {
+                    replyHtml = `
+                        <p>Your dining expenses total **₹ 12,150** this month. You are currently **15% below** your quarterly restaurant ceiling!</p>
+                        <div class="mt-2 p-2 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-lg text-[11px] text-emerald-800 dark:text-emerald-300 font-medium flex items-center gap-2">
+                            <i class="pi pi-check-circle text-emerald-500"></i>
+                            <span>Recommendation: You have ₹ 3,850 remaining safe-spend balance for weekend dining.</span>
+                        </div>
+                    `;
+                } else if (text.toLowerCase().includes('owe') || text.toLowerCase().includes('group') || text.toLowerCase().includes('receiv')) {
+                    replyHtml = `
+                        <p>Across your 3 active groups, **you are owed a net total of ₹ 18,450**.</p>
+                        <p class="mt-1 text-slate-500 dark:text-slate-400">Major pending receivables:</p>
+                        <ul class="list-disc pl-4 mt-1 space-y-1 font-semibold text-slate-800 dark:text-white">
+                            <li>George (Office Team): <span class="text-emerald-600">+ ₹ 3,400</span></li>
+                            <li>Goa Retreat Group: <span class="text-emerald-600">+ ₹ 15,050</span></li>
+                        </ul>
+                    `;
+                } else {
+                    replyHtml = `
+                        <p>I have processed your query regarding <span class="font-mono bg-slate-100 dark:bg-slate-800 px-1 rounded text-indigo-600 dark:text-indigo-400">${text}</span> against current cycle records.</p>
+                        <p class="mt-1.5">All ledger balances and credit card cycles appear synchronized. Would you like me to generate a downloadable PDF summary of this analysis?</p>
+                        <div class="mt-2 flex gap-1.5">
+                            <button onclick="alert('Exporting AI audit report as PDF...')" class="bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 px-2.5 py-1 rounded font-semibold text-[11px] transition flex items-center gap-1">
+                                <i class="pi pi-download text-[10px]"></i><span>Export Report</span>
+                            </button>
+                        </div>
+                    `;
+                }
+
+                messagesEl.innerHTML += `
+                    <div class="flex items-start gap-3 animate-fadeIn">
+                        <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-indigo-500 to-pink-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0 shadow-sm mt-0.5">AI</div>
+                        <div class="space-y-1.5 max-w-[88%]">
+                            <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl rounded-tl-none border border-slate-200 dark:border-slate-800 shadow-sm text-slate-800 dark:text-slate-200 text-xs space-y-1.5 leading-relaxed">
+                                ${replyHtml}
+                            </div>
+                            <div class="flex items-center gap-3 pl-1 text-[11px] text-slate-400">
+                                <button onclick="alert('Response copied!')" class="hover:text-slate-600 dark:hover:text-slate-200 flex items-center gap-1"><i class="pi pi-copy text-[10px]"></i> Copy</button>
+                                <button onclick="this.classList.toggle('text-emerald-500')" class="hover:text-emerald-500"><i class="pi pi-thumbs-up text-[10px]"></i></button>
+                                <button onclick="this.classList.toggle('text-rose-500')" class="hover:text-rose-500"><i class="pi pi-thumbs-down text-[10px]"></i></button>
+                                <span class="text-[10px] text-slate-400 ml-auto font-mono">Verified • AI v4</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                messagesEl.scrollTop = messagesEl.scrollHeight;
+            }, 1000);
+        }
+
+        // 4. Chart.js Initialization
+        let barChart, doughnutChart, analyticsChart;
+        let chartsInitialized = false;
+
+        function initCharts() {
+            if (chartsInitialized) return;
+            chartsInitialized = true;
+
+            const barCtx = document.getElementById('barChart')?.getContext('2d');
+            if (barCtx) {
+                barChart = new Chart(barCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                        datasets: [
+                            { label: 'Personal Spend', data: [32000, 28500, 35000, 31000, 42000, 38000], backgroundColor: '#4f46e5', borderRadius: 4 },
+                            { label: 'Group Share', data: [12000, 15000, 11000, 18000, 14000, 16500], backgroundColor: '#38bdf8', borderRadius: 4 }
+                        ]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+                        scales: {
+                            x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 11 }, color: '#64748b' } },
+                            y: { grid: { color: 'rgba(148, 163, 184, 0.1)' }, ticks: { font: { family: 'Inter', size: 11 }, color: '#64748b', callback: v => '₹' + (v/1000) + 'k' } }
+                        }
+                    }
+                });
+            }
+
+            const doughnutCtx = document.getElementById('doughnutChart')?.getContext('2d');
+            if (doughnutCtx) {
+                doughnutChart = new Chart(doughnutCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Housing', 'Food', 'Travel', 'Tech'],
+                        datasets: [{ data: [40, 25, 20, 15], backgroundColor: ['#4f46e5', '#10b981', '#f59e0b', '#a855f7'], borderWidth: 0, hoverOffset: 4 }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { display: false } } }
+                });
+            }
+
+            const analyticsCtx = document.getElementById('analyticsChart')?.getContext('2d');
+            if (analyticsCtx) {
+                analyticsChart = new Chart(analyticsCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                        datasets: [{
+                            label: 'Total Expenses (₹)', data: [45000, 44000, 43500, 46000, 49000, 56000, 54500],
+                            borderColor: '#4f46e5', backgroundColor: 'rgba(79, 70, 229, 0.08)', fill: true, tension: 0.3, pointBackgroundColor: '#4f46e5'
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+                        scales: {
+                            x: { grid: { display: false }, ticks: { color: '#64748b' } },
+                            y: { grid: { color: 'rgba(148, 163, 184, 0.1)' }, ticks: { color: '#64748b', callback: v => '₹' + (v/1000) + 'k' } }
+                        }
+                    }
+                });
+            }
+        }
+
+        function updateChartsTheme() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const gridColor = isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(148, 163, 184, 0.1)';
+            const tickColor = isDark ? '#94a3b8' : '#64748b';
+            
+            [barChart, analyticsChart].forEach(chart => {
+                if(chart) {
+                    chart.options.scales.x.ticks.color = tickColor;
+                    chart.options.scales.y.ticks.color = tickColor;
+                    chart.options.scales.y.grid.color = gridColor;
+                    chart.update();
+                }
+            });
+        }
+    </script>
+</body>
+</html>
