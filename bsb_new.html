@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Berkley Small Business Solutions - Multi-Action Split Cards</title>
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <style>
+    :root {
+      --primary-dark: #005a36;
+      --primary-green: #0b7346;
+      --primary-light-green: #118452;
+      --accent-active-ring: #00a859;
+      --btn-green: #076239;
+      --btn-green-hover: #054e2d;
+      --border-gray: #c5d3cb;
+      --input-border: #9fb3a8;
+      --bg-active-pill: #a5c2b5;
+      --bg-inactive-pill: #f1f5f3;
+      --cancel-btn-bg: #f9c5b6;
+      --cancel-btn-text: #b33919;
+      --footer-bg: #2b2b2b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: #f7faf8;
+      color: #333333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* --- TOP BRAND HEADER --- */
+    .top-header {
+      background-color: #ffffff;
+      padding: 12px 35px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #e1e7e4;
+    }
+    .brand-logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-logo-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2px solid var(--primary-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary-green);
+      font-size: 20px;
+    }
+    .brand-text h1 {
+      font-size: 22px;
+      color: #333;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+    .brand-text h2 {
+      font-size: 19px;
+      color: var(--primary-green);
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      line-height: 1.1;
+    }
+    .brand-text p {
+      font-size: 11px;
+      color: #777;
+      margin-top: 1px;
+    }
+    .user-nav {
+      font-size: 11px;
+      color: #555;
+      text-align: right;
+    }
+    .user-nav .links {
+      margin-top: 4px;
+      display: flex;
+      gap: 10px;
+    }
+    .user-nav a {
+      color: #333;
+      text-decoration: none;
+    }
+    .user-nav a:hover {
+      text-decoration: underline;
+    }
+
+    /* --- STEPPER ICONS --- */
+    .stepper-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 32px;
+      padding: 24px 15px 18px 15px;
+      background-color: #f7faf8;
+    }
+    .step-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      width: 75px;
+    }
+    .step-circle {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background-color: #cae3d7;
+      color: var(--primary-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      position: relative;
+      transition: all 0.2s ease;
+    }
+    .step-circle .step-plus {
+      position: absolute;
+      top: 10px;
+      right: 11px;
+      font-size: 9px;
+      font-weight: bold;
+    }
+    .step-item.active .step-circle {
+      background-color: var(--primary-dark);
+      color: #ffffff;
+      box-shadow: 0 0 0 4px #24b967;
+    }
+    .step-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #444;
+      margin-top: 6px;
+      text-align: center;
+    }
+    .step-item.active .step-label {
+      color: #111;
+      font-weight: 700;
+    }
+
+    /* --- MAIN CONTENT CONTAINER --- */
+    .content-wrap {
+      max-width: 940px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 0 15px 40px 15px;
+      flex: 1;
+    }
+
+    /* --- POLICY CONTEXT STRIP --- */
+    .policy-strip {
+      border: 1.5px solid var(--primary-dark);
+      border-radius: 4px;
+      background-color: #ffffff;
+      padding: 8px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11.5px;
+      color: #222;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    /* --- WORKFLOW CARD --- */
+    .main-card {
+      background: #ffffff;
+      border: 1px solid var(--border-gray);
+      border-radius: 4px;
+      padding: 16px 20px;
+      position: relative;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .card-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .cancel-endorsement-btn {
+      background-color: var(--cancel-btn-bg);
+      color: var(--cancel-btn-text);
+      border: none;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-left: auto;
+    }
+
+    /* --- INLINE WORKFLOW TOGGLE PILLS STRIP (NO POPUP) --- */
+    .scope-selector-strip {
+      background-color: #f2f7f4;
+      border: 1px solid #cce0d6;
+      border-radius: 6px;
+      padding: 8px 14px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .scope-strip-label {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .scope-chips-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .scope-toggle-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #ffffff;
+      border: 1.5px solid #b8d4c5;
+      padding: 4px 12px;
+      border-radius: 14px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #333;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s ease;
+    }
+    .scope-toggle-pill input[type="checkbox"] {
+      width: 14px;
+      height: 14px;
+      accent-color: var(--primary-green);
+      cursor: pointer;
+    }
+    .scope-toggle-pill.checked {
+      background-color: #e5f3ec;
+      border-color: var(--primary-green);
+      color: var(--primary-dark);
+    }
+
+    /* ======================================================== */
+    /* --- MULTI-ACTION SPLIT CARDS --- */
+    /* ======================================================== */
+    .split-card-item {
+      border: 1.5px solid var(--border-gray);
+      border-radius: 4px;
+      margin-bottom: 14px;
+      overflow: hidden;
+      background-color: #ffffff;
+      transition: border-color 0.2s ease;
+    }
+    .split-card-item:hover {
+      border-color: #9cbfae;
+    }
+    .split-card-header {
+      background-color: #f7faf8;
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.2s ease;
+    }
+    .split-card-header.expanded {
+      background-color: var(--primary-dark);
+      color: #ffffff;
+      border-bottom: 1px solid var(--primary-dark);
+    }
+    .split-card-title {
+      font-size: 12.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .split-card-tag {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 10px;
+      background: #e2ede7;
+      color: var(--primary-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .split-card-header.expanded .split-card-tag {
+      background: rgba(255,255,255,0.22);
+      color: #ffffff;
+    }
+    .split-card-toggle-icon {
+      font-size: 12px;
+    }
+    .split-card-body {
+      padding: 16px;
+      background: #ffffff;
+      display: none;
+    }
+
+    /* --- DUAL COLUMN (LEFT RAIL + FORM PANEL) --- */
+    .dual-pane-grid {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    /* Left Rail Selection Box */
+    .left-rail-box {
+      border: 1px solid var(--border-gray);
+      border-radius: 3px;
+      padding: 8px;
+      background-color: #fafcfb;
+    }
+    .rail-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #222;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #e0ebe5;
+      margin-bottom: 8px;
+    }
+    .rail-header .rail-icons {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: #666;
+    }
+    .rail-header .rail-icons .add-icon {
+      color: var(--primary-green);
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .rail-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: var(--bg-active-pill);
+      padding: 5px 8px;
+      border-radius: 3px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #1a382b;
+      margin-bottom: 5px;
+      cursor: pointer;
+    }
+    .rail-item .rail-item-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .rail-item .checkbox-ph {
+      width: 12px;
+      height: 12px;
+      background: white;
+      border: 1px solid #999;
+      border-radius: 2px;
+    }
+    .rail-item .trash-icon {
+      color: #a82323;
+      cursor: pointer;
+      font-size: 11px;
+    }
+
+    /* Form Fields & Grid */
+    .form-row {
+      display: grid;
+      grid-template-columns: 145px 1fr;
+      align-items: center;
+      margin-bottom: 9px;
+      font-size: 11.5px;
+    }
+    .form-row.two-col-inputs {
+      grid-template-columns: 145px 1fr 65px 1fr;
+      gap: 8px;
+    }
+    .form-row label {
+      color: #222;
+      font-weight: 600;
+    }
+    .req-star {
+      color: #c92a2a;
+      margin-left: 2px;
+    }
+    .input-control, select.input-control {
+      width: 100%;
+      height: 28px;
+      border: 1px solid var(--input-border);
+      border-radius: 3px;
+      padding: 2px 8px;
+      font-size: 11.5px;
+      color: #333;
+      background-color: #fff;
+    }
+    .input-control:focus {
+      outline: 1px solid var(--primary-green);
+      border-color: var(--primary-green);
+    }
+    .input-date-wrap {
+      position: relative;
+    }
+    .input-date-wrap input {
+      padding-right: 28px;
+    }
+    .input-date-wrap .calendar-icon {
+      position: absolute;
+      right: 7px;
+      top: 6px;
+      font-size: 13px;
+      color: var(--primary-dark);
+      pointer-events: none;
+    }
+    .three-inline-inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+    .radio-group, .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 11.5px;
+    }
+    .radio-group label, .checkbox-group label {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: normal;
+      cursor: pointer;
+    }
+    .action-link-btn {
+      color: #0b68a3;
+      font-size: 11px;
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-block;
+      margin-top: 4px;
+      cursor: pointer;
+    }
+    .action-link-btn:hover {
+      text-decoration: underline;
+    }
+
+    .panel-inner-btn-wrap {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 10px;
+    }
+    .btn-green-action {
+      background-color: var(--btn-green);
+      color: #ffffff;
+      border: none;
+      padding: 6px 14px;
+      font-size: 11.5px;
+      font-weight: 600;
+      border-radius: 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .btn-green-action:hover {
+      background-color: var(--btn-green-hover);
+    }
+
+    /* Notes Area */
+    .notes-section {
+      margin-top: 14px;
+      margin-bottom: 12px;
+    }
+    .notes-section label {
+      font-size: 11.5px;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 5px;
+      color: #222;
+    }
+    .notes-textarea {
+      width: 100%;
+      height: 70px;
+      border: 1px solid var(--input-border);
+      border-radius: 3px;
+      padding: 6px;
+      font-size: 11.5px;
+      resize: vertical;
+    }
+
+    /* Supporting Documents Dropzone */
+    .uploader-card {
+      border: 1.5px dashed #999999;
+      border-radius: 4px;
+      padding: 16px 10px;
+      text-align: center;
+      background-color: #fafcfb;
+      margin-top: 12px;
+    }
+    .uploader-card .upload-title {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #111;
+    }
+    .uploader-card .upload-subtitle {
+      font-size: 10.5px;
+      color: #555;
+      margin: 2px 0 4px 0;
+    }
+    .uploader-card .browse-link {
+      font-size: 11px;
+      color: #111;
+      font-weight: 700;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    .uploader-card-footer-note {
+      font-size: 9.5px;
+      color: #777;
+      margin-top: 4px;
+    }
+
+    /* Bottom Action Bar */
+    .bottom-action-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      padding-top: 10px;
+    }
+    .endorsement-switch-pill {
+      background-color: var(--primary-dark);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 14px;
+      padding: 6px 14px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-actions-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .pill-btn-nav {
+      background-color: var(--primary-dark);
+      color: #ffffff;
+      font-size: 11.5px;
+      font-weight: 600;
+      border-radius: 14px;
+      padding: 6px 15px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .pill-btn-nav:hover, .endorsement-switch-pill:hover {
+      background-color: #034428;
+    }
+
+    /* Empty state */
+    .empty-state-notice {
+      padding: 28px;
+      text-align: center;
+      color: #666;
+      font-size: 12px;
+      border: 1px dashed var(--border-gray);
+      border-radius: 4px;
+      background: #fafcfb;
+      margin-bottom: 12px;
+    }
+
+    /* Site Footer */
+    .site-footer {
+      background-color: var(--footer-bg);
+      color: #d1d1d1;
+      padding: 24px 35px 12px 35px;
+      margin-top: auto;
+      border-bottom: 4px solid var(--primary-dark);
+    }
+    .footer-grid {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+    .footer-brand {
+      background-color: #ffffff;
+      padding: 12px 18px;
+      border-radius: 3px;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .footer-brand h3 {
+      color: #222;
+      font-size: 18px;
+      line-height: 1;
+    }
+    .footer-brand h4 {
+      color: var(--primary-green);
+      font-size: 16px;
+      line-height: 1;
+    }
+    .footer-contact {
+      font-size: 11px;
+      line-height: 1.4;
+      color: #dcdcdc;
+    }
+    .footer-contact .phone {
+      font-size: 13px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 4px;
+    }
+    .footer-contact a {
+      color: #dcdcdc;
+      text-decoration: none;
+    }
+    .footer-bottom-bar {
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid #444;
+      padding-top: 10px;
+      font-size: 9.5px;
+      color: #999;
+    }
+    .footer-bottom-bar a {
+      color: #999;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. Top Header -->
+  <header class="top-header">
+    <div class="brand-logo-wrap">
+      <div class="brand-logo-icon">
+        <i class="fa-solid fa-road"></i>
+      </div>
+      <div class="brand-text">
+        <h1>Berkley</h1>
+        <h2>SMALL BUSINESS SOLUTIONS</h2>
+        <p>| a Berkley Company</p>
+      </div>
+    </div>
+    <div class="user-nav">
+      <div>Welcome, <strong>Mohan Kumar Mariappan</strong></div>
+      <div class="links">
+        <a href="#">Home</a>
+        <a href="#">User Admin</a>
+        <a href="#">Internal Admin</a>
+        <a href="#">Business Owner Policy</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 2. Step Icons Ribbon -->
+  <div class="stepper-container">
+    <div class="step-item active" onclick="switchStep('driver')">
+      <div class="step-circle"><i class="fa-solid fa-user"></i><span class="step-plus">+</span></div>
+      <span class="step-label">Driver</span>
+    </div>
+    <div class="step-item" onclick="switchStep('vehicle')">
+      <div class="step-circle"><i class="fa-solid fa-truck"></i><span class="step-plus">+</span></div>
+      <span class="step-label">Vehicle</span>
+    </div>
+    <div class="step-item" onclick="switchStep('additional-insured')">
+      <div class="step-circle"><i class="fa-solid fa-id-card"></i><span class="step-plus">+</span></div>
+      <span class="step-label">Additional<br>Insured</span>
+    </div>
+    <div class="step-item" onclick="switchStep('policy-holder')">
+      <div class="step-circle"><i class="fa-solid fa-address-card"></i><span class="step-plus">+</span></div>
+      <span class="step-label">Policy Holder</span>
+    </div>
+    <div class="step-item" onclick="switchStep('coverages')">
+      <div class="step-circle"><i class="fa-solid fa-shield-halved"></i><span class="step-plus">+</span></div>
+      <span class="step-label">Coverages</span>
+    </div>
+    <div class="step-item" onclick="switchStep('loss-run')">
+      <div class="step-circle"><i class="fa-solid fa-file-lines"></i><span class="step-plus">+</span></div>
+      <span class="step-label">Loss Run</span>
+    </div>
+    <div class="step-item" onclick="switchStep('others')">
+      <div class="step-circle"><i class="fa-regular fa-copy"></i></div>
+      <span class="step-label">Others</span>
+    </div>
+  </div>
+
+  <!-- 3. Dynamic Form Workspace -->
+  <main class="content-wrap">
+    
+    <!-- Policy Info Ribbon -->
+    <div class="policy-strip">
+      <div>Policy #: <strong>7818868</strong></div>
+      <div>Named Insured: <strong>PAVILLION LOGISTICS INC</strong></div>
+      <div>Endorsement Eff Date: <strong>08-26-2026</strong></div>
+    </div>
+
+    <!-- Main Card Body -->
+    <div class="main-card">
+      <div class="card-top-bar">
+        <div style="font-weight: 700; font-size: 13.5px; color: var(--primary-dark);" id="page-main-heading">
+          Driver Endorsement
+        </div>
+        <button class="cancel-endorsement-btn"><i class="fa-solid fa-xmark"></i> Cancel Endorsement</button>
+      </div>
+
+      <!-- INLINE WORKFLOW TOGGLE PILLS STRIP (Direct UI selection on the page) -->
+      <div class="scope-selector-strip" id="scope-selector-container">
+        <div class="scope-strip-label">
+          <i class="fa-solid fa-sliders"></i> Active Operations:
+        </div>
+        <div class="scope-chips-group" id="scope-chips-list">
+          <!-- Dynamically populated toggle pills -->
+        </div>
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- STEP 1: DRIVER -->
+      <!-- ======================================================== -->
+      <section id="step-driver" class="step-view">
+        
+        <!-- Card 1: Add Driver -->
+        <div class="split-card-item" id="card-wrap-add-driver">
+          <div class="split-card-header" onclick="toggleSplitCard('driver-add-body', this)">
+            <div class="split-card-title">
+              <i class="fa-solid fa-circle-plus"></i> Action: Add New Drivers
+              <span class="split-card-tag">1 Enqueued</span>
+            </div>
+            <i class="fa-solid fa-chevron-down split-card-toggle-icon"></i>
+          </div>
+          <div id="driver-add-body" class="split-card-body">
+            <div class="dual-pane-grid">
+              <div class="left-rail-box">
+                <div class="rail-header">
+                  <span>Add Driver - 1</span>
+                  <div class="rail-icons">
+                    <div class="checkbox-ph"></div>
+                    <i class="fa-solid fa-trash-can"></i>
+                    <i class="fa-solid fa-circle-plus add-icon"></i>
+                  </div>
+                </div>
+                <div class="rail-item">
+                  <span>Driver 1</span>
+                  <div class="rail-item-actions">
+                    <div class="checkbox-ph"></div>
+                    <i class="fa-solid fa-trash-can trash-icon"></i>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="form-row">
+                  <label>First Name:<span class="req-star">*</span></label>
+                  <input type="text" class="input-control" placeholder="First Name" />
+                </div>
+                <div class="form-row">
+                  <label>Middle:</label>
+                  <input type="text" class="input-control" placeholder="Middle Name" />
+                </div>
+                <div class="form-row">
+                  <label>Last:<span class="req-star">*</span></label>
+                  <input type="text" class="input-control" placeholder="Last Name" />
+                </div>
+                <div class="form-row">
+                  <label>Suffix:</label>
+                  <select class="input-control"><option>Select Suffix</option></select>
+                </div>
+                <div class="form-row">
+                  <label>Date Of Birth:<span class="req-star">*</span></label>
+                  <div class="input-date-wrap">
+                    <input type="text" class="input-control" placeholder="MM / DD / YYYY" />
+                    <i class="fa-regular fa-calendar calendar-icon"></i>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <label>Drivers License State:<span class="req-star">*</span></label>
+                  <select class="input-control"><option>Select State</option></select>
+                </div>
+                <div class="form-row">
+                  <label>Drivers License Number:<span class="req-star">*</span></label>
+                  <input type="text" class="input-control" placeholder="Driver License Number" />
+                </div>
+                <div class="form-row">
+                  <label>Original Date Licensed:<span class="req-star">*</span></label>
+                  <div class="input-date-wrap">
+                    <input type="text" class="input-control" placeholder="MM / DD / YYYY" />
+                    <i class="fa-regular fa-calendar calendar-icon"></i>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <label>Date Of Hire:<span class="req-star">*</span></label>
+                  <div class="input-date-wrap">
+                    <input type="text" class="input-control" placeholder="MM / DD / YYYY" />
+                    <i class="fa-regular fa-calendar calendar-icon"></i>
+                  </div>
+                </div>
+                <div class="panel-inner-btn-wrap">
+                  <button class="btn-green-action"><i class="fa-solid fa-plus"></i> Add Another Driver to Queue</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Delete Driver -->
+        <div class="split-card-item" id="card-wrap-delete-driver">
+          <div class="split-card-header" onclick="toggleSplitCard('driver-del-body', this)">
+            <div class="split-card-title">
+              <i class="fa-solid fa-circle-minus"></i> Action: Delete Existing Drivers
+              <span class="split-card-tag">Removal Queue</span>
+            </div>
+            <i class="fa-solid fa-chevron-down split-card-toggle-icon"></i>
+          </div>
+          <div id="driver-del-body" class="split-card-body">
+            <div class="dual-pane-grid">
+              <div class="left-rail-box">
+                <div class="rail-header"><span>Delete Driver - 1</span></div>
+                <div class="rail-item"><span>Driver 1</span><div class="checkbox-ph"></div></div>
+              </div>
+              <div>
+                <div class="form-row"><label>First Name:<span class="req-star">*</span></label><input type="text" class="input-control" placeholder="First Name" /></div>
+                <div class="form-row"><label>Last:<span class="req-star">*</span></label><input type="text" class="input-control" placeholder="Last Name" /></div>
+                <div class="form-row"><label>Drivers License #:<span class="req-star">*</span></label><input type="text" class="input-control" placeholder="Driver License Number" /></div>
+                <div class="panel-inner-btn-wrap">
+                  <button class="btn-green-action"><i class="fa-solid fa-trash"></i> Enter Driver for Deletion</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- STEP 2: VEHICLE -->
+      <!-- ======================================================== -->
+      <section id="step-vehicle" class="step-view" style="display: none;">
+        
+        <!-- Card 1: Add Vehicle Unit -->
+        <div class="split-card-item" id="card-wrap-add-vehicle">
+          <div class="split-card-header" onclick="toggleSplitCard('vehicle-add-body', this)">
+            <div class="split-card-title">
+              <i class="fa-solid fa-truck"></i> Action: Add New Vehicle Units
+              <span class="split-card-tag">2 Enqueued</span>
+            </div>
+            <i class="fa-solid fa-chevron-down split-card-toggle-icon"></i>
+          </div>
+          <div id="vehicle-add-body" class="split-card-body">
+            <div class="dual-pane-grid">
+              <div class="left-rail-box">
+                <div class="rail-header"><span>Add Vehicle - 2</span><i class="fa-solid fa-circle-plus add-icon"></i></div>
+                <div class="rail-item"><span>PU / Trailer 1</span><div class="checkbox-ph"></div></div>
+                <div class="rail-item"><span>PU / Trailer 2</span><div class="checkbox-ph"></div></div>
+              </div>
+              <div>
+                <div class="form-row"><label>Vehicle Type<span class="req-star">*</span></label><select class="input-control"><option>Power Unit</option><option>Trailer</option></select></div>
+                <div class="form-row"><label>Year<span class="req-star">*</span></label><input type="text" class="input-control" placeholder="YYYY" /></div>
+                <div class="form-row"><label>Make<span class="req-star">*</span></label><input type="text" class="input-control" placeholder="MAKE" /></div>
+                <div class="form-row"><label>Model<span class="req-star">*</span></label><input type="text" class="input-control" placeholder="MODEL" /></div>
+                <div class="form-row"><label>VIN<span class="req-star">*</span></label><input type="text" class="input-control" placeholder="VIN#" /></div>
+                <div class="form-row"><label>Stated Amount:<span class="req-star">*</span></label><input type="text" class="input-control" placeholder="Enter Stated Amount $0" /></div>
+                <div class="panel-inner-btn-wrap"><button class="btn-green-action"><i class="fa-solid fa-plus"></i> Add Vehicle to Queue</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Delete Vehicle Unit -->
+        <div class="split-card-item" id="card-wrap-delete-vehicle">
+          <div class="split-card-header" onclick="toggleSplitCard('vehicle-del-body', this)">
+            <div class="split-card-title">
+              <i class="fa-solid fa-truck-arrow-right"></i> Action: Delete Existing Vehicle Units
+              <span class="split-card-tag">Removal Queue</span>
+            </div>
+            <i class="fa-solid fa-chevron-down split-card-toggle-icon"></i>
+          </div>
+          <div id="vehicle-del-body" class="split-card-body">
+            <div class="dual-pane-grid">
+              <div class="left-rail-box">
+                <div class="rail-header"><span>Delete Vehicle - 1</span></div>
+                <div class="rail-item"><span>PU / Trailer 1</span><div class="checkbox-ph"></div></div>
+              </div>
+              <div>
+                <div class="form-row"><label>Select Vehicle Type<span class="req-star">*</span></label><select class="input-control"><option>Select Vehicle Type</option></select></div>
+                <div class="form-row"><label>VIN<span class="req-star">*</span></label><input type="text" class="input-control" placeholder="Vehicle ID Number" /></div>
+                <div class="panel-inner-btn-wrap"><button class="btn-green-action"><i class="fa-solid fa-trash"></i> Enter Vehicle for Deletion</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- STEP 3: ADDITIONAL INSURED -->
+      <!-- ======================================================== -->
+      <section id="step-additional-insured" class="step-view" style="display: none;">
+        
+        <!-- Card 1: Add AI -->
+        <div class="split-card-item" id="card-wrap-add-ai">
+          <div class="split-card-header" onclick="toggleSplitCard('ai-add-body', this)">
+            <div class="split-card-title">
+              <i class="fa-solid fa-shield-halved"></i> Action: Add Additional Insured
+              <span class="split-card-tag">2 Enqueued</span>
+            </div>
+            <i class="fa-solid fa-chevron-down split-card-toggle-icon"></i>
+          </div>
+          <div id="ai-add-body" class="split-card-body">
+            <div class="dual-pane-grid">
+              <div class="left-rail-box">
+                <div class="rail-header"><span>Add AI - 2</span><i class="fa-solid fa-circle-plus add-icon"></i></div>
+                <div class="rail-item"><span>AI 1</span><div class="checkbox-ph"></div></div>
+                <div class="rail-item"><span>AI 2</span><div class="checkbox-ph"></div></div>
+              </div>
+              <div>
+                <div class="form-row"><label>Line of Business<span class="req-star">*</span></label>
+                  <div class="checkbox-group">
+                    <label><input type="checkbox" /> Auto</label>
+                    <label><input type="checkbox" /> GL</label>
+                    <label><input type="checkbox" /> Cargo</label>
+                  </div>
+                </div>
+                <div class="form-row"><label>Person / Organization<span class="req-star">*</span></label><input type="text" class="input-control" placeholder="Insured Name" /></div>
+                <div class="form-row"><label>Address<span class="req-star">*</span></label><input type="text" class="input-control" placeholder="Street Address" /></div>
+                <div class="panel-inner-btn-wrap"><button class="btn-green-action"><i class="fa-solid fa-plus"></i> Add Additional Insured</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Delete AI -->
+        <div class="split-card-item" id="card-wrap-delete-ai">
+          <div class="split-card-header" onclick="toggleSplitCard('ai-del-body', this)">
+            <div class="split-card-title">
+              <i class="fa-solid fa-shield-xmark"></i> Action: Delete Additional Insured
+              <span class="split-card-tag">Removal Queue</span>
+            </div>
+            <i class="fa-solid fa-chevron-down split-card-toggle-icon"></i>
+          </div>
+          <div id="ai-del-body" class="split-card-body">
+            <div class="form-row"><label>Organization Name<span class="req-star">*</span></label><input type="text" class="input-control" placeholder="Insured Name to remove" /></div>
+            <div class="panel-inner-btn-wrap"><button class="btn-green-action"><i class="fa-solid fa-trash"></i> Enter AI for Deletion</button></div>
+          </div>
+        </div>
+
+        <!-- Card 3: Add Loss Payee -->
+        <div class="split-card-item" id="card-wrap-add-lp">
+          <div class="split-card-header" onclick="toggleSplitCard('ai-lp-body', this)">
+            <div class="split-card-title">
+              <i class="fa-solid fa-building-columns"></i> Action: Add Loss Payee / Lienholder
+              <span class="split-card-tag">1 Enqueued</span>
+            </div>
+            <i class="fa-solid fa-chevron-down split-card-toggle-icon"></i>
+          </div>
+          <div id="ai-lp-body" class="split-card-body">
+            <div class="dual-pane-grid">
+              <div class="left-rail-box">
+                <div class="rail-header"><span>Add Loss Payee - 1</span></div>
+                <div class="rail-item"><span>LP 1</span><div class="checkbox-ph"></div></div>
+              </div>
+              <div>
+                <div class="form-row"><label>Enter Name<span class="req-star">*</span></label><input type="text" class="input-control" placeholder="Loss Payee Name" /></div>
+                <div class="form-row"><label>Address<span class="req-star">*</span></label><input type="text" class="input-control" placeholder="Street Address" /></div>
+                <div class="panel-inner-btn-wrap"><button class="btn-green-action"><i class="fa-solid fa-plus"></i> Add Loss Payee</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- STEP 4: POLICY HOLDER -->
+      <!-- ======================================================== -->
+      <section id="step-policy-holder" class="step-view" style="display: none;">
+        
+        <!-- Card 1: Insured Information -->
+        <div class="split-card-item" id="card-wrap-ph-insured">
+          <div class="split-card-header" onclick="toggleSplitCard('ph-insured-body', this)">
+            <div class="split-card-title"><i class="fa-solid fa-id-card"></i> Section: Insured & DBA Information</div>
+            <i class="fa-solid fa-chevron-down split-card-toggle-icon"></i>
+          </div>
+          <div id="ph-insured-body" class="split-card-body">
+            <div class="form-row two-col-inputs">
+              <label>Name:<span class="req-star">*</span></label>
+              <input type="text" class="input-control" placeholder="Insured Name" />
+              <label>DBA:<span class="req-star">*</span></label>
+              <input type="text" class="input-control" placeholder="DBA" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Address Details -->
+        <div class="split-card-item" id="card-wrap-ph-address">
+          <div class="split-card-header" onclick="toggleSplitCard('ph-address-body', this)">
+            <div class="split-card-title"><i class="fa-solid fa-location-dot"></i> Section: Address Details</div>
+            <i class="fa-solid fa-chevron-down split-card-toggle-icon"></i>
+          </div>
+          <div id="ph-address-body" class="split-card-body">
+            <div class="form-row two-col-inputs">
+              <label>Address Type:<span class="req-star">*</span></label>
+              <select class="input-control"><option>Select Option</option></select>
+              <label>Address:<span class="req-star">*</span></label>
+              <input type="text" class="input-control" placeholder="Street Address" />
+            </div>
+            <div style="text-align: right;"><a class="action-link-btn">+ Add Another Address</a></div>
+          </div>
+        </div>
+
+        <!-- Card 3: Filings -->
+        <div class="split-card-item" id="card-wrap-ph-filings">
+          <div class="split-card-header" onclick="toggleSplitCard('ph-filings-body', this)">
+            <div class="split-card-title"><i class="fa-solid fa-file-contract"></i> Section: State & Federal Filings</div>
+            <i class="fa-solid fa-chevron-down split-card-toggle-icon"></i>
+          </div>
+          <div id="ph-filings-body" class="split-card-body">
+            <div class="form-row">
+              <label>Select Filings Type:<span class="req-star">*</span></label>
+              <div class="checkbox-group">
+                <label><input type="checkbox" /> OS / OW</label>
+                <label><input type="checkbox" /> State Filings</label>
+                <label><input type="checkbox" /> Federal Filings</label>
+              </div>
+            </div>
+            <div class="form-row">
+              <label>Filings Description:<span class="req-star">*</span></label>
+              <input type="text" class="input-control" placeholder="List filings needed" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4: Commodities -->
+        <div class="split-card-item" id="card-wrap-ph-commodity">
+          <div class="split-card-header" onclick="toggleSplitCard('ph-commodity-body', this)">
+            <div class="split-card-title"><i class="fa-solid fa-boxes-stacked"></i> Section: Commodity Breakdown</div>
+            <i class="fa-solid fa-chevron-down split-card-toggle-icon"></i>
+          </div>
+          <div id="ph-commodity-body" class="split-card-body">
+            <div class="form-row two-col-inputs">
+              <label>Commodity:<span class="req-star">*</span></label>
+              <select class="input-control"><option>Select Commodity</option></select>
+              <label>Commodity %:<span class="req-star">*</span></label>
+              <input type="text" class="input-control" value="0" />
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- STEP 5: COVERAGES -->
+      <!-- ======================================================== -->
+      <section id="step-coverages" class="step-view" style="display: none;">
+        
+        <div class="split-card-item" id="card-wrap-coverage">
+          <div class="split-card-header" onclick="toggleSplitCard('cov-coverage-body', this)">
+            <div class="split-card-title"><i class="fa-solid fa-shield"></i> Action: Coverage Limits</div>
+            <i class="fa-solid fa-chevron-down split-card-toggle-icon"></i>
+          </div>
+          <div id="cov-coverage-body" class="split-card-body">
+            <div class="form-row"><label>Coverage Scope:<span class="req-star">*</span></label><select class="input-control"><option>Primary Auto Liability</option></select></div>
+          </div>
+        </div>
+
+        <div class="split-card-item" id="card-wrap-deductible">
+          <div class="split-card-header" onclick="toggleSplitCard('cov-deduct-body', this)">
+            <div class="split-card-title"><i class="fa-solid fa-tags"></i> Action: Deductible Adjustments</div>
+            <i class="fa-solid fa-chevron-down split-card-toggle-icon"></i>
+          </div>
+          <div id="cov-deduct-body" class="split-card-body">
+            <div class="form-row"><label>Deductible Tier:<span class="req-star">*</span></label><select class="input-control"><option>$1,000</option><option>$2,500</option></select></div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- STEP 6: LOSS RUN -->
+      <!-- ======================================================== -->
+      <section id="step-loss-run" class="step-view" style="display: none;">
+        <div class="split-card-item" id="card-wrap-loss-run-request">
+          <div class="split-card-header" onclick="toggleSplitCard('loss-run-body', this)">
+            <div class="split-card-title"><i class="fa-solid fa-file-lines"></i> Loss Run Request & Documentation</div>
+            <i class="fa-solid fa-chevron-down split-card-toggle-icon"></i>
+          </div>
+          <div id="loss-run-body" class="split-card-body">
+            <p style="font-size: 11.5px; color: #555;">Please enter remarks and upload supporting loss documentation below.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- STEP 7: OTHERS -->
+      <!-- ======================================================== -->
+      <section id="step-others" class="step-view" style="display: none;">
+        <div class="split-card-item" id="card-wrap-other-endorsement">
+          <div class="split-card-header" onclick="toggleSplitCard('others-body', this)">
+            <div class="split-card-title"><i class="fa-solid fa-pen-to-square"></i> General Endorsement Scope</div>
+            <i class="fa-solid fa-chevron-down split-card-toggle-icon"></i>
+          </div>
+          <div id="others-body" class="split-card-body">
+            <p style="font-size: 11.5px; color: #555;">Submit miscellaneous endorsement details not covered in earlier categories.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Empty state when all options are unchecked -->
+      <div id="no-cards-placeholder" class="empty-state-notice" style="display: none;">
+        <i class="fa-solid fa-circle-exclamation" style="font-size: 18px; color: #b33919; margin-bottom: 6px; display: block;"></i>
+        No operations selected above. Please check at least one operation to display its card.
+      </div>
+
+      <!-- COMMON SHARED NOTES AREA -->
+      <div id="shared-notes-container" class="notes-section" style="display: none;">
+        <label>Enter any notes you would like the Berkley Small Business Solutions Underwriter to consider below:<span class="req-star">*</span></label>
+        <textarea class="notes-textarea" placeholder="Add optional remarks..."></textarea>
+      </div>
+
+      <!-- COMMON SHARED SUPPORTING DOCUMENTS DROPZONE -->
+      <div class="uploader-wrap" id="shared-uploader-wrap">
+        <div style="font-size: 11px; color: #444; margin-bottom: 4px; display: none;" id="uploader-label">
+          Please upload supporting documents for this endorsement request
+        </div>
+        <div class="uploader-card">
+          <div class="upload-title">Drag &amp; Drop Files Here</div>
+          <div class="upload-subtitle">or</div>
+          <div class="browse-link">Browse Files</div>
+        </div>
+        <div class="uploader-card-footer-note">The combined file size limit is 15 MB.</div>
+      </div>
+
+      <!-- COMMON BOTTOM ACTION BAR -->
+      <div class="bottom-action-bar">
+        <button class="endorsement-switch-pill" onclick="expandAllCards(true)">
+          <i class="fa-solid fa-up-right-and-down-left-from-center"></i> Expand All
+        </button>
+
+        <div class="nav-actions-right" id="standard-nav-actions">
+          <button class="pill-btn-nav" onclick="navigateStep(1)">
+            <i class="fa-solid fa-circle-arrow-right"></i> Save &amp; Continue
+          </button>
+        </div>
+
+        <div class="nav-actions-right" id="final-nav-actions" style="display: none;">
+          <button class="pill-btn-nav"><i class="fa-solid fa-book-open"></i> View Application</button>
+          <button class="pill-btn-nav"><i class="fa-solid fa-check"></i> Save &amp; Submit</button>
+          <button class="pill-btn-nav"><i class="fa-solid fa-floppy-disk"></i> Save as Draft &amp; Close</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- 4. Site Footer -->
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="brand-logo-icon" style="width:36px; height:36px; font-size:16px;">
+          <i class="fa-solid fa-road"></i>
+        </div>
+        <div>
+          <h3>Berkley</h3>
+          <h4>SMALL BUSINESS SOLUTIONS</h4>
+          <p style="font-size: 9.5px; color: #777;">| a Berkley Company</p>
+        </div>
+      </div>
+      <div class="footer-contact">
+        <div class="phone">855-272-7555</div>
+        <div>Berkley Small Business Solutions</div>
+        <div>433 South Main Street, Suite 200</div>
+        <div>West Hartford, CT 06110</div>
+        <div style="margin-top: 4px;"><i class="fa-regular fa-envelope"></i> <a href="mailto:info@berkleysmallbusiness.com">info@berkleysmallbusiness.com</a></div>
+      </div>
+    </div>
+    <div class="footer-bottom-bar">
+      <div>&copy; 2026 Berkley Small Business Solutions | a Berkley Company</div>
+      <div><a href="#">Licensing</a> | <a href="#">Privacy Policy</a></div>
+    </div>
+  </footer>
+
+  <script>
+    // Step configuration
+    const stepConfig = {
+      'driver': {
+        title: 'Driver Endorsement',
+        options: [
+          { id: 'add-driver', label: 'Add Driver' },
+          { id: 'delete-driver', label: 'Delete Driver' }
+        ]
+      },
+      'vehicle': {
+        title: 'Vehicle Endorsement',
+        options: [
+          { id: 'add-vehicle', label: 'Add Vehicle' },
+          { id: 'delete-vehicle', label: 'Delete Vehicle' }
+        ]
+      },
+      'additional-insured': {
+        title: 'Additional Insured & Loss Payee',
+        options: [
+          { id: 'add-ai', label: 'Add Additional Insured' },
+          { id: 'delete-ai', label: 'Delete Additional Insured' },
+          { id: 'add-lp', label: 'Add Loss Payee' }
+        ]
+      },
+      'policy-holder': {
+        title: 'Policy Holder Endorsement',
+        options: [
+          { id: 'ph-insured', label: 'Insured Information' },
+          { id: 'ph-address', label: 'Address Details' },
+          { id: 'ph-filings', label: 'Filings' },
+          { id: 'ph-commodity', label: 'Commodities' }
+        ]
+      },
+      'coverages': {
+        title: 'Coverages & Deductibles',
+        options: [
+          { id: 'coverage', label: 'Coverage Limits' },
+          { id: 'deductible', label: 'Deductible Tier' }
+        ]
+      },
+      'loss-run': {
+        title: 'Loss Run Endorsement',
+        options: [
+          { id: 'loss-run-request', label: 'Loss Run Request' }
+        ]
+      },
+      'others': {
+        title: 'Other Endorsement',
+        options: [
+          { id: 'other-endorsement', label: 'General Notes & Files' }
+        ]
+      }
+    };
+
+    // Pre-selected options per step
+    const userSelections = {
+      'driver': ['add-driver', 'delete-driver'],
+      'vehicle': ['add-vehicle', 'delete-vehicle'],
+      'additional-insured': ['add-ai', 'add-lp'],
+      'policy-holder': ['ph-insured', 'ph-address', 'ph-filings', 'ph-commodity'],
+      'coverages': ['coverage', 'deductible'],
+      'loss-run': ['loss-run-request'],
+      'others': ['other-endorsement']
+    };
+
+    const steps = ['driver', 'vehicle', 'additional-insured', 'policy-holder', 'coverages', 'loss-run', 'others'];
+    let currentStepIndex = 0;
+    let currentStepKey = 'driver';
+
+    /* --- STEP NAVIGATION --- */
+    function switchStep(stepKey) {
+      currentStepIndex = steps.indexOf(stepKey);
+      currentStepKey = stepKey;
+      renderCurrentStep();
+    }
+
+    function navigateStep(direction) {
+      const nextIndex = Math.min(Math.max(0, currentStepIndex + direction), steps.length - 1);
+      switchStep(steps[nextIndex]);
+    }
+
+    /* --- INLINE OPTION CHIP TOGGLING --- */
+    function toggleOption(stepKey, optId, isChecked) {
+      let list = userSelections[stepKey] || [];
+      if (isChecked && !list.includes(optId)) {
+        list.push(optId);
+      } else if (!isChecked) {
+        list = list.filter(id => id !== optId);
+      }
+      userSelections[stepKey] = list;
+      renderCurrentStep();
+    }
+
+    /* --- COLLAPSE / EXPAND TOGGLE --- */
+    function toggleSplitCard(bodyId, headerElem) {
+      const body = document.getElementById(bodyId);
+      const icon = headerElem.querySelector('.split-card-toggle-icon');
+      const isCurrentlyClosed = (body.style.display === 'none' || body.style.display === '');
+
+      body.style.display = isCurrentlyClosed ? 'block' : 'none';
+      headerElem.classList.toggle('expanded', isCurrentlyClosed);
+
+      if (icon) {
+        icon.className = isCurrentlyClosed 
+          ? 'fa-solid fa-chevron-up split-card-toggle-icon' 
+          : 'fa-solid fa-chevron-down split-card-toggle-icon';
+      }
+    }
+
+    /* Expand / Collapse All Helper */
+    function expandAllCards(expand) {
+      const currentView = document.getElementById(`step-${currentStepKey}`);
+      if (!currentView) return;
+
+      const headers = currentView.querySelectorAll('.split-card-header');
+      headers.forEach(header => {
+        const body = header.nextElementSibling;
+        const icon = header.querySelector('.split-card-toggle-icon');
+
+        body.style.display = expand ? 'block' : 'none';
+        header.classList.toggle('expanded', expand);
+        if (icon) {
+          icon.className = expand 
+            ? 'fa-solid fa-chevron-up split-card-toggle-icon' 
+            : 'fa-solid fa-chevron-down split-card-toggle-icon';
+        }
+      });
+    }
+
+    /* --- RENDER WORKSPACE --- */
+    function renderCurrentStep() {
+      const activeKey = steps[currentStepIndex];
+      currentStepKey = activeKey;
+      const cfg = stepConfig[activeKey];
+      const selectedOpts = userSelections[activeKey] || [];
+
+      // Update Page Main Heading
+      document.getElementById('page-main-heading').innerText = cfg.title;
+
+      // Update Top Stepper Circles
+      document.querySelectorAll('.step-item').forEach((elem, idx) => {
+        elem.classList.toggle('active', idx === currentStepIndex);
+      });
+
+      // Update Active View Section
+      document.querySelectorAll('.step-view').forEach(elem => elem.style.display = 'none');
+      const activeSection = document.getElementById(`step-${activeKey}`);
+      if (activeSection) activeSection.style.display = 'block';
+
+      // Render Inline Scope Selector Chips (Direct on-page UI)
+      const scopeStrip = document.getElementById('scope-selector-container');
+      const chipsContainer = document.getElementById('scope-chips-list');
+      chipsContainer.innerHTML = '';
+
+      if (cfg.options.length <= 1) {
+        scopeStrip.style.display = 'none';
+      } else {
+        scopeStrip.style.display = 'flex';
+        cfg.options.forEach(opt => {
+          const isSelected = selectedOpts.includes(opt.id);
+          const chip = document.createElement('label');
+          chip.className = `scope-toggle-pill ${isSelected ? 'checked' : ''}`;
+          chip.innerHTML = `
+            <input type="checkbox" ${isSelected ? 'checked' : ''} onchange="toggleOption('${activeKey}', '${opt.id}', this.checked)">
+            <span>${opt.label}</span>
+          `;
+          chipsContainer.appendChild(chip);
+        });
+      }
+
+      // Manage Split Cards: Show only selected, OPEN the FIRST option, COLLAPSE subsequent options
+      let visibleCardCount = 0;
+      let firstVisibleOptFound = false;
+
+      cfg.options.forEach(opt => {
+        const cardWrap = document.getElementById(`card-wrap-${opt.id}`);
+        if (cardWrap) {
+          const isVisible = selectedOpts.includes(opt.id);
+          cardWrap.style.display = isVisible ? 'block' : 'none';
+
+          if (isVisible) {
+            visibleCardCount++;
+            const header = cardWrap.querySelector('.split-card-header');
+            const body = cardWrap.querySelector('.split-card-body');
+            const icon = cardWrap.querySelector('.split-card-toggle-icon');
+
+            if (!firstVisibleOptFound) {
+              // FIRST SELECTED OPTION: ALWAYS EXPANDED
+              firstVisibleOptFound = true;
+              if (body) body.style.display = 'block';
+              if (header) header.classList.add('expanded');
+              if (icon) icon.className = 'fa-solid fa-chevron-up split-card-toggle-icon';
+            } else {
+              // SUBSEQUENT OPTIONS: COLLAPSED
+              if (body) body.style.display = 'none';
+              if (header) header.classList.remove('expanded');
+              if (icon) icon.className = 'fa-solid fa-chevron-down split-card-toggle-icon';
+            }
+          }
+        }
+      });
+
+      // Placeholder if no card selected
+      document.getElementById('no-cards-placeholder').style.display = visibleCardCount === 0 ? 'block' : 'none';
+
+      // Shared Notes visibility (Steps: Additional Insured, Policy Holder, Coverages, Loss Run, Others)
+      const notesContainer = document.getElementById('shared-notes-container');
+      const uploaderLabel = document.getElementById('uploader-label');
+      if (['additional-insured', 'policy-holder', 'coverages', 'loss-run', 'others'].includes(activeKey)) {
+        notesContainer.style.display = 'block';
+        uploaderLabel.style.display = 'block';
+      } else {
+        notesContainer.style.display = 'none';
+        uploaderLabel.style.display = 'none';
+      }
+
+      // Final Step Action Buttons
+      const isFinal = activeKey === 'others';
+      document.getElementById('standard-nav-actions').style.display = isFinal ? 'none' : 'flex';
+      document.getElementById('final-nav-actions').style.display = isFinal ? 'flex' : 'none';
+    }
+
+    // Default initialization: opens Driver, first card expanded, others collapsed
+    document.addEventListener('DOMContentLoaded', () => {
+      renderCurrentStep();
+    });
+  </script>
+</body>
+</html>
