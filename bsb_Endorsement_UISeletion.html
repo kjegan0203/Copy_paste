@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Berkley Small Business Solutions - Policy Endorsement</title>
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <style>
+    :root {
+      --primary-dark: #005a36;
+      --primary-green: #0b7346;
+      --primary-light-green: #118452;
+      --accent-active-ring: #00a859;
+      --btn-green: #076239;
+      --btn-green-hover: #054e2d;
+      --border-gray: #c5d3cb;
+      --input-border: #9fb3a8;
+      --bg-active-pill: #a5c2b5;
+      --bg-inactive-pill: #f1f5f3;
+      --cancel-btn-bg: #f9c5b6;
+      --cancel-btn-text: #b33919;
+      --footer-bg: #2b2b2b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: #f7faf8;
+      color: #333333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* --- TOP BRAND HEADER --- */
+    .top-header {
+      background-color: #ffffff;
+      padding: 12px 35px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #e1e7e4;
+    }
+    .brand-logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-logo-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2px solid var(--primary-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary-green);
+      font-size: 20px;
+    }
+    .brand-text h1 {
+      font-size: 22px;
+      color: #333;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+    .brand-text h2 {
+      font-size: 19px;
+      color: var(--primary-green);
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      line-height: 1.1;
+    }
+    .brand-text p {
+      font-size: 11px;
+      color: #777;
+      margin-top: 1px;
+    }
+    .user-nav {
+      font-size: 11px;
+      color: #555;
+      text-align: right;
+    }
+    .user-nav .links {
+      margin-top: 4px;
+      display: flex;
+      gap: 10px;
+    }
+    .user-nav a {
+      color: #333;
+      text-decoration: none;
+    }
+    .user-nav a:hover {
+      text-decoration: underline;
+    }
+
+    /* --- STEPPER ICONS --- */
+    .stepper-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 32px;
+      padding: 24px 15px 18px 15px;
+      background-color: #f7faf8;
+    }
+    .step-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      width: 75px;
+    }
+    .step-circle {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background-color: #cae3d7;
+      color: var(--primary-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      position: relative;
+      transition: all 0.2s ease;
+    }
+    .step-circle .step-plus {
+      position: absolute;
+      top: 10px;
+      right: 11px;
+      font-size: 9px;
+      font-weight: bold;
+    }
+    .step-item.active .step-circle {
+      background-color: var(--primary-dark);
+      color: #ffffff;
+      box-shadow: 0 0 0 4px #24b967;
+    }
+    .step-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #444;
+      margin-top: 6px;
+      text-align: center;
+    }
+    .step-item.active .step-label {
+      color: #111;
+      font-weight: 700;
+    }
+
+    /* --- MAIN CONTENT CONTAINER --- */
+    .content-wrap {
+      max-width: 920px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 0 15px 40px 15px;
+      flex: 1;
+    }
+
+    /* --- POLICY CONTEXT STRIP --- */
+    .policy-strip {
+      border: 1.5px solid var(--primary-dark);
+      border-radius: 4px;
+      background-color: #ffffff;
+      padding: 8px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11.5px;
+      color: #222;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    /* --- WORKFLOW CARD --- */
+    .main-card {
+      background: #ffffff;
+      border: 1px solid var(--border-gray);
+      border-radius: 4px;
+      padding: 16px 20px;
+      position: relative;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .card-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .modify-options-badge {
+      font-size: 11px;
+      color: var(--primary-green);
+      background-color: #eaf5ef;
+      border: 1px dashed var(--primary-green);
+      padding: 4px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .modify-options-badge:hover {
+      background-color: #d7ede1;
+    }
+    .cancel-endorsement-btn {
+      background-color: var(--cancel-btn-bg);
+      color: var(--cancel-btn-text);
+      border: none;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-left: auto;
+    }
+
+    /* ======================================================== */
+    /* --- ZERO-STATE "CHOOSE YOUR WORKFLOW" LANDING SLATE --- */
+    /* ======================================================== */
+    .landing-slate-container {
+      padding: 24px 20px;
+      text-align: center;
+      background: #fafcfb;
+      border: 1px dashed #b6d3c3;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      animation: fadeIn 0.25s ease-in-out;
+    }
+    .slate-header-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .slate-header-sub {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 20px;
+    }
+    .slate-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      max-width: 760px;
+      margin: 0 auto 20px auto;
+    }
+    .workflow-tile {
+      background: #ffffff;
+      border: 1.5px solid #c9ded3;
+      border-radius: 6px;
+      padding: 16px 14px;
+      cursor: pointer;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      user-select: none;
+    }
+    .workflow-tile:hover {
+      border-color: var(--primary-green);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(11, 115, 70, 0.12);
+    }
+    .workflow-tile.selected {
+      border-color: var(--primary-green);
+      background-color: #f1f9f4;
+      box-shadow: 0 0 0 1px var(--primary-green);
+    }
+    .tile-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .tile-icon-box {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #e8f3ed;
+      color: var(--primary-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+    .workflow-tile.selected .tile-icon-box {
+      background: var(--primary-dark);
+      color: #ffffff;
+    }
+    .tile-checkbox {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primary-green);
+      cursor: pointer;
+    }
+    .tile-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #222;
+      margin-bottom: 4px;
+    }
+    .tile-desc {
+      font-size: 11px;
+      color: #666;
+      line-height: 1.35;
+    }
+    .slate-confirm-bar {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    /* --- SUB TABS --- */
+    .subtabs-container {
+      display: flex;
+      border-bottom: 1px solid var(--border-gray);
+      margin-bottom: 14px;
+      gap: 2px;
+    }
+    .subtab {
+      background: #e8f0ec;
+      border: 1px solid var(--border-gray);
+      border-bottom: none;
+      padding: 6px 16px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--primary-dark);
+      cursor: pointer;
+      border-radius: 3px 3px 0 0;
+    }
+    .subtab.active {
+      background: #ffffff;
+      border-bottom: 1px solid #ffffff;
+      margin-bottom: -1px;
+      color: #111;
+    }
+
+    /* --- DUAL COLUMN (LEFT RAIL + FORM) --- */
+    .dual-pane-grid {
+      display: grid;
+      grid-template-columns: 190px 1fr;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+    .single-pane-grid {
+      display: block;
+      margin-bottom: 14px;
+    }
+
+    /* Left Rail Selection Box */
+    .left-rail-box {
+      border: 1px solid var(--border-gray);
+      border-radius: 3px;
+      padding: 8px;
+      background-color: #fafcfb;
+      align-self: start;
+    }
+    .rail-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #222;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #e0ebe5;
+      margin-bottom: 8px;
+    }
+    .rail-header .rail-icons {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: #666;
+    }
+    .rail-header .rail-icons .add-icon {
+      color: var(--primary-green);
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .rail-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: var(--bg-active-pill);
+      padding: 5px 8px;
+      border-radius: 3px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #1a382b;
+      margin-bottom: 5px;
+      cursor: pointer;
+    }
+    .rail-item .rail-item-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .rail-item .checkbox-ph {
+      width: 12px;
+      height: 12px;
+      background: white;
+      border: 1px solid #999;
+      border-radius: 2px;
+    }
+    .rail-item .trash-icon {
+      color: #a82323;
+      cursor: pointer;
+      font-size: 11px;
+    }
+
+    /* Form Panels */
+    .form-panel {
+      border: 1px solid var(--border-gray);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .panel-header-banner {
+      background-color: var(--primary-dark);
+      color: #ffffff;
+      padding: 7px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+    .panel-body {
+      padding: 14px 16px;
+      background-color: #ffffff;
+    }
+
+    /* Form Fields & Grid */
+    .form-row {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      align-items: center;
+      margin-bottom: 9px;
+      font-size: 11.5px;
+    }
+    .form-row.two-col-inputs {
+      grid-template-columns: 140px 1fr 60px 1fr;
+      gap: 8px;
+    }
+    .form-row label {
+      color: #222;
+      font-weight: 600;
+    }
+    .req-star {
+      color: #c92a2a;
+      margin-left: 2px;
+    }
+    .input-control, select.input-control {
+      width: 100%;
+      height: 28px;
+      border: 1px solid var(--input-border);
+      border-radius: 3px;
+      padding: 2px 8px;
+      font-size: 11.5px;
+      color: #333;
+      background-color: #fff;
+    }
+    .input-control:focus {
+      outline: 1px solid var(--primary-green);
+      border-color: var(--primary-green);
+    }
+    .input-date-wrap {
+      position: relative;
+    }
+    .input-date-wrap input {
+      padding-right: 28px;
+    }
+    .input-date-wrap .calendar-icon {
+      position: absolute;
+      right: 7px;
+      top: 6px;
+      font-size: 13px;
+      color: var(--primary-dark);
+      pointer-events: none;
+    }
+    .three-inline-inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+    .radio-group, .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 11.5px;
+    }
+    .radio-group label, .checkbox-group label {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: normal;
+      cursor: pointer;
+    }
+    .action-link-btn {
+      color: #0b68a3;
+      font-size: 11px;
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-block;
+      margin-top: 4px;
+      cursor: pointer;
+    }
+    .action-link-btn:hover {
+      text-decoration: underline;
+    }
+
+    .panel-inner-btn-wrap {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 10px;
+    }
+    .btn-green-action {
+      background-color: var(--btn-green);
+      color: #ffffff;
+      border: none;
+      padding: 6px 14px;
+      font-size: 11.5px;
+      font-weight: 600;
+      border-radius: 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .btn-green-action:hover {
+      background-color: var(--btn-green-hover);
+    }
+
+    /* Notes Area */
+    .notes-section {
+      margin-top: 12px;
+      margin-bottom: 12px;
+    }
+    .notes-section label {
+      font-size: 11px;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 5px;
+      color: #222;
+    }
+    .notes-textarea {
+      width: 100%;
+      height: 70px;
+      border: 1px solid var(--input-border);
+      border-radius: 3px;
+      padding: 6px;
+      font-size: 11.5px;
+      resize: vertical;
+    }
+
+    /* Supporting Documents Dropzone */
+    .uploader-card {
+      border: 1.5px dashed #999999;
+      border-radius: 4px;
+      padding: 16px 10px;
+      text-align: center;
+      background-color: #fafcfb;
+      margin-top: 12px;
+    }
+    .uploader-card .upload-title {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #111;
+    }
+    .uploader-card .upload-subtitle {
+      font-size: 10.5px;
+      color: #555;
+      margin: 2px 0 4px 0;
+    }
+    .uploader-card .browse-link {
+      font-size: 11px;
+      color: #111;
+      font-weight: 700;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    .uploader-card-footer-note {
+      font-size: 9.5px;
+      color: #777;
+      margin-top: 4px;
+    }
+
+    /* Bottom Action Bar */
+    .bottom-action-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 18px;
+      padding-top: 10px;
+    }
+    .endorsement-switch-pill {
+      background-color: var(--primary-dark);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 14px;
+      padding: 6px 14px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-actions-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .pill-btn-nav {
+      background-color: var(--primary-dark);
+      color: #ffffff;
+      font-size: 11.5px;
+      font-weight: 600;
+      border-radius: 14px;
+      padding: 6px 15px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .pill-btn-nav:hover, .endorsement-switch-pill:hover {
+      background-color: #034428;
+    }
+
+    /* --- MAIN FOOTER --- */
+    .site-footer {
+      background-color: var(--footer-bg);
+      color: #d1d1d1;
+      padding: 24px 35px 12px 35px;
+      margin-top: auto;
+      border-bottom: 4px solid var(--primary-dark);
+    }
+    .footer-grid {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+    .footer-brand {
+      background-color: #ffffff;
+      padding: 12px 18px;
+      border-radius: 3px;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .footer-brand h3 {
+      color: #222;
+      font-size: 18px;
+      line-height: 1;
+    }
+    .footer-brand h4 {
+      color: var(--primary-green);
+      font-size: 16px;
+      line-height: 1;
+    }
+    .footer-contact {
+      font-size: 11px;
+      line-height: 1.4;
+      color: #dcdcdc;
+    }
+    .footer-contact .phone {
+      font-size: 13px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 4px;
+    }
+    .footer-contact a {
+      color: #dcdcdc;
+      text-decoration: none;
+    }
+    .footer-bottom-bar {
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid #444;
+      padding-top: 10px;
+      font-size: 9.5px;
+      color: #999;
+    }
+    .footer-bottom-bar a {
+      color: #999;
+      text-decoration: none;
+    }
+
+    .help-tooltip-icon {
+      color: #0b7346;
+      font-size: 12px;
+      cursor: pointer;
+      margin-left: 4px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. Top Header -->
+  <header class="top-header">
+    <div class="brand-logo-wrap">
+      <div class="brand-logo-icon">
+        <i class="fa-solid fa-road"></i>
+      </div>
+      <div class="brand-text">
+        <h1>Berkley</h1>
+        <h2>SMALL BUSINESS SOLUTIONS</h2>
+        <p>| a Berkley Company</p>
+      </div>
+    </div>
+    <div class="user-nav">
+      <div>Welcome, <strong>Mohan Kumar Mariappan</strong></div>
+      <div class="links">
+        <a href="#">Home</a>
+        <a href="#">User Admin</a>
+        <a href="#">Internal Admin</a>
+        <a href="#">Business Owner Policy</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 2. Step Icons Ribbon -->
+  <div class="stepper-container">
+    <div class="step-item active" onclick="switchStep('driver')">
+      <div class="step-circle"><i class="fa-solid fa-user"></i><span class="step-plus">+</span></div>
+      <span class="step-label">Driver</span>
+    </div>
+    <div class="step-item" onclick="switchStep('vehicle')">
+      <div class="step-circle"><i class="fa-solid fa-truck"></i><span class="step-plus">+</span></div>
+      <span class="step-label">Vehicle</span>
+    </div>
+    <div class="step-item" onclick="switchStep('additional-insured')">
+      <div class="step-circle"><i class="fa-solid fa-id-card"></i><span class="step-plus">+</span></div>
+      <span class="step-label">Additional<br>Insured</span>
+    </div>
+    <div class="step-item" onclick="switchStep('policy-holder')">
+      <div class="step-circle"><i class="fa-solid fa-address-card"></i><span class="step-plus">+</span></div>
+      <span class="step-label">Policy Holder</span>
+    </div>
+    <div class="step-item" onclick="switchStep('coverages')">
+      <div class="step-circle"><i class="fa-solid fa-shield-halved"></i><span class="step-plus">+</span></div>
+      <span class="step-label">Coverages</span>
+    </div>
+    <div class="step-item" onclick="switchStep('loss-run')">
+      <div class="step-circle"><i class="fa-solid fa-file-lines"></i><span class="step-plus">+</span></div>
+      <span class="step-label">Loss Run</span>
+    </div>
+    <div class="step-item" onclick="switchStep('others')">
+      <div class="step-circle"><i class="fa-regular fa-copy"></i></div>
+      <span class="step-label">Others</span>
+    </div>
+  </div>
+
+  <!-- 3. Dynamic Form Workspace -->
+  <main class="content-wrap">
+    
+    <!-- Policy Info Ribbon -->
+    <div class="policy-strip">
+      <div>Policy #: <strong>7818868</strong></div>
+      <div>Named Insured: <strong>PAVILLION LOGISTICS INC</strong></div>
+      <div>Endorsement Eff Date: <strong>08-26-2026</strong></div>
+    </div>
+
+    <!-- Main Card Body -->
+    <div class="main-card">
+      <div class="card-top-bar">
+        <!-- Change Workflow Button -->
+        <button id="modify-workflow-btn" class="modify-options-badge" onclick="resetToWorkflowSlate(currentStepKey)">
+          <i class="fa-solid fa-sliders"></i> Modify Selected Options in this Page
+        </button>
+        <button class="cancel-endorsement-btn"><i class="fa-solid fa-xmark"></i> Cancel Endorsement</button>
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- ZERO-STATE WORKFLOW SELECTION SLATE CANVAS -->
+      <!-- ======================================================== -->
+      <div id="landing-slate-canvas" class="landing-slate-container" style="display: none;">
+        <div class="slate-header-title">
+          <i class="fa-solid fa-clipboard-check"></i>
+          <span id="slate-step-title">Choose Endorsement Scope</span>
+        </div>
+        <p class="slate-header-sub">Select which actions or sections you are going to modify before proceeding:</p>
+        
+        <div class="slate-cards-grid" id="slate-tiles-container">
+          <!-- Dynamic cards injected here -->
+        </div>
+
+        <div class="slate-confirm-bar">
+          <button class="btn-green-action" style="padding: 8px 24px; font-size: 12.5px;" onclick="confirmSlateSelection()">
+            Continue to Form <i class="fa-solid fa-arrow-right" style="margin-left: 4px;"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- ACTIVE FORM BODY CONTAINER -->
+      <!-- ======================================================== -->
+      <div id="form-body-container">
+        
+        <!-- STEP 1: DRIVER -->
+        <section id="step-driver" class="step-view">
+          <div class="subtabs-container" id="tabs-driver">
+            <button class="subtab active" data-subtab="add-driver" onclick="selectSubTab('step-driver', 'add-driver')">Add Driver</button>
+            <button class="subtab" data-subtab="delete-driver" onclick="selectSubTab('step-driver', 'delete-driver')">Delete Driver</button>
+          </div>
+          
+          <!-- Add Driver Subtab -->
+          <div class="subtab-content" id="driver-pane-add-driver">
+            <div class="dual-pane-grid">
+              <div class="left-rail-box">
+                <div class="rail-header">
+                  <span>Add Driver - 1</span>
+                  <div class="rail-icons">
+                    <div class="checkbox-ph"></div>
+                    <i class="fa-solid fa-trash-can"></i>
+                    <i class="fa-solid fa-circle-plus add-icon"></i>
+                  </div>
+                </div>
+                <div class="rail-item">
+                  <span>Driver 1</span>
+                  <div class="rail-item-actions">
+                    <div class="checkbox-ph"></div>
+                    <i class="fa-solid fa-trash-can trash-icon"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="form-panel">
+                <div class="panel-header-banner">New Driver</div>
+                <div class="panel-body">
+                  <div class="form-row">
+                    <label>First Name:<span class="req-star">*</span></label>
+                    <input type="text" class="input-control" placeholder="First Name" />
+                  </div>
+                  <div class="form-row">
+                    <label>Middle:</label>
+                    <input type="text" class="input-control" placeholder="Middle Name" />
+                  </div>
+                  <div class="form-row">
+                    <label>Last:<span class="req-star">*</span></label>
+                    <input type="text" class="input-control" placeholder="Last Name" />
+                  </div>
+                  <div class="form-row">
+                    <label>Suffix:</label>
+                    <select class="input-control"><option>Select Suffix</option></select>
+                  </div>
+                  <div class="form-row">
+                    <label>Date Of Birth:<span class="req-star">*</span></label>
+                    <div class="input-date-wrap">
+                      <input type="text" class="input-control" placeholder="MM / DD / YYYY" />
+                      <i class="fa-regular fa-calendar calendar-icon"></i>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <label>Drivers License State:<span class="req-star">*</span></label>
+                    <select class="input-control"><option>Select Drivers License State</option></select>
+                  </div>
+                  <div class="form-row">
+                    <label>Drivers License Number:<span class="req-star">*</span></label>
+                    <input type="text" class="input-control" placeholder="Driver License Number" />
+                  </div>
+                  <div class="form-row">
+                    <label>Original Date Licensed:<span class="req-star">*</span> <i class="fa-solid fa-circle-question help-tooltip-icon"></i></label>
+                    <div class="input-date-wrap">
+                      <input type="text" class="input-control" placeholder="MM / DD / YYYY" />
+                      <i class="fa-regular fa-calendar calendar-icon"></i>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <label>Date Of Hire:<span class="req-star">*</span></label>
+                    <div class="input-date-wrap">
+                      <input type="text" class="input-control" placeholder="MM / DD / YYYY" />
+                      <i class="fa-regular fa-calendar calendar-icon"></i>
+                    </div>
+                  </div>
+                  <div class="panel-inner-btn-wrap">
+                    <button class="btn-green-action"><i class="fa-solid fa-plus"></i> Add New Driver</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Delete Driver Subtab -->
+          <div class="subtab-content" id="driver-pane-delete-driver" style="display: none;">
+            <div class="dual-pane-grid">
+              <div class="left-rail-box">
+                <div class="rail-header">
+                  <span>Delete Driver - 1</span>
+                  <div class="rail-icons">
+                    <div class="checkbox-ph"></div>
+                    <i class="fa-solid fa-trash-can"></i>
+                    <i class="fa-solid fa-circle-plus add-icon"></i>
+                  </div>
+                </div>
+                <div class="rail-item">
+                  <span>Driver 1</span>
+                  <div class="rail-item-actions">
+                    <div class="checkbox-ph"></div>
+                    <i class="fa-solid fa-trash-can trash-icon"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="form-panel">
+                <div class="panel-header-banner">Delete Driver</div>
+                <div class="panel-body">
+                  <div class="form-row">
+                    <label>First Name:<span class="req-star">*</span></label>
+                    <input type="text" class="input-control" placeholder="First Name" />
+                  </div>
+                  <div class="form-row">
+                    <label>Last:<span class="req-star">*</span></label>
+                    <input type="text" class="input-control" placeholder="Last Name" />
+                  </div>
+                  <div class="form-row">
+                    <label>Drivers License Number:<span class="req-star">*</span></label>
+                    <input type="text" class="input-control" placeholder="Driver License Number" />
+                  </div>
+                  <div class="panel-inner-btn-wrap">
+                    <button class="btn-green-action"><i class="fa-solid fa-plus"></i> Enter Another Driver</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- STEP 2: VEHICLE -->
+        <section id="step-vehicle" class="step-view" style="display: none;">
+          <div class="subtabs-container" id="tabs-vehicle">
+            <button class="subtab active" data-subtab="add-vehicle" onclick="selectSubTab('step-vehicle', 'add-vehicle')">Add Vehicle</button>
+            <button class="subtab" data-subtab="delete-vehicle" onclick="selectSubTab('step-vehicle', 'delete-vehicle')">Delete Vehicle</button>
+          </div>
+          
+          <!-- Add Vehicle Subtab -->
+          <div class="subtab-content" id="vehicle-pane-add-vehicle">
+            <div class="dual-pane-grid">
+              <div class="left-rail-box">
+                <div class="rail-header">
+                  <span>Add Vehicle - 2</span>
+                  <div class="rail-icons">
+                    <div class="checkbox-ph"></div>
+                    <i class="fa-solid fa-trash-can"></i>
+                    <i class="fa-solid fa-circle-plus add-icon"></i>
+                  </div>
+                </div>
+                <div class="rail-item">
+                  <span>PU / Trailer 1</span>
+                  <div class="rail-item-actions">
+                    <div class="checkbox-ph"></div>
+                    <i class="fa-solid fa-trash-can trash-icon"></i>
+                  </div>
+                </div>
+                <div class="rail-item">
+                  <span>PU / Trailer 2</span>
+                  <div class="rail-item-actions">
+                    <div class="checkbox-ph"></div>
+                    <i class="fa-solid fa-trash-can trash-icon"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="form-panel">
+                <div class="panel-header-banner">New Unit</div>
+                <div class="panel-body">
+                  <div class="form-row">
+                    <label>Vehicle Type<span class="req-star">*</span></label>
+                    <select class="input-control"><option>Power Unit</option><option>Trailer</option></select>
+                  </div>
+                  <div class="form-row">
+                    <label>Year<span class="req-star">*</span></label>
+                    <input type="text" class="input-control" placeholder="YYYY" />
+                  </div>
+                  <div class="form-row">
+                    <label>Make<span class="req-star">*</span></label>
+                    <input type="text" class="input-control" placeholder="MAKE" />
+                  </div>
+                  <div class="form-row">
+                    <label>Model<span class="req-star">*</span></label>
+                    <input type="text" class="input-control" placeholder="MODEL" />
+                  </div>
+                  <div class="form-row">
+                    <label>VIN<span class="req-star">*</span></label>
+                    <input type="text" class="input-control" placeholder="VIN#" />
+                  </div>
+                  <div class="form-row">
+                    <label>What is the stated amount of this unit including custom parts and equipments?<span class="req-star">*</span></label>
+                    <input type="text" class="input-control" placeholder="Enter Stated Amount $0" />
+                  </div>
+                  <div class="form-row">
+                    <label>Are there custom parts and equipment on this unit?<span class="req-star">*</span></label>
+                    <div class="radio-group">
+                      <label><input type="radio" name="cust_parts" /> Yes</label>
+                      <label><input type="radio" name="cust_parts" checked /> No</label>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <label>Does this unit have an additional insured or loss payee?<span class="req-star">*</span></label>
+                    <div class="radio-group">
+                      <label><input type="radio" name="add_ins_veh" /> Yes</label>
+                      <label><input type="radio" name="add_ins_veh" checked /> No</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Delete Vehicle Subtab -->
+          <div class="subtab-content" id="vehicle-pane-delete-vehicle" style="display: none;">
+            <div class="dual-pane-grid">
+              <div class="left-rail-box">
+                <div class="rail-header">
+                  <span>Delete Vehicle - 1</span>
+                  <div class="rail-icons">
+                    <div class="checkbox-ph"></div>
+                    <i class="fa-solid fa-trash-can"></i>
+                    <i class="fa-solid fa-circle-plus add-icon"></i>
+                  </div>
+                </div>
+                <div class="rail-item">
+                  <span>PU / Trailer 1</span>
+                  <div class="rail-item-actions">
+                    <div class="checkbox-ph"></div>
+                    <i class="fa-solid fa-trash-can trash-icon"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="form-panel">
+                <div class="panel-header-banner">Delete Unit</div>
+                <div class="panel-body">
+                  <div class="form-row">
+                    <label>Select Vehicle Type<span class="req-star">*</span></label>
+                    <select class="input-control"><option>Select Vehicle Type</option></select>
+                  </div>
+                  <div class="form-row">
+                    <label>VIN<span class="req-star">*</span></label>
+                    <input type="text" class="input-control" placeholder="Vehicle ID Number" />
+                  </div>
+                  <div class="panel-inner-btn-wrap">
+                    <button class="btn-green-action"><i class="fa-solid fa-plus"></i> Enter Vehicle for Deletion</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- STEP 3: ADDITIONAL INSURED -->
+        <section id="step-additional-insured" class="step-view" style="display: none;">
+          <div class="subtabs-container" id="tabs-additional-insured">
+            <button class="subtab active" data-subtab="add-ai" onclick="selectSubTab('step-additional-insured', 'add-ai')">Add Additional Insured</button>
+            <button class="subtab" data-subtab="delete-ai" onclick="selectSubTab('step-additional-insured', 'delete-ai')">Delete Additional Insured</button>
+            <button class="subtab" data-subtab="add-lp" onclick="selectSubTab('step-additional-insured', 'add-lp')">Add Loss Payee</button>
+          </div>
+
+          <!-- Add AI -->
+          <div class="subtab-content" id="ai-pane-add-ai">
+            <div class="dual-pane-grid">
+              <div class="left-rail-box">
+                <div class="rail-header">
+                  <span>Add AI - 2</span>
+                  <div class="rail-icons">
+                    <div class="checkbox-ph"></div>
+                    <i class="fa-solid fa-trash-can"></i>
+                    <i class="fa-solid fa-circle-plus add-icon"></i>
+                  </div>
+                </div>
+                <div class="rail-item"><span>AI 1</span><div class="rail-item-actions"><div class="checkbox-ph"></div><i class="fa-solid fa-trash-can trash-icon"></i></div></div>
+                <div class="rail-item"><span>AI 2</span><div class="rail-item-actions"><div class="checkbox-ph"></div><i class="fa-solid fa-trash-can trash-icon"></i></div></div>
+              </div>
+              <div class="form-panel">
+                <div class="panel-header-banner">Add Additional Insured</div>
+                <div class="panel-body">
+                  <div class="form-row">
+                    <label>Select Line of Business<span class="req-star">*</span></label>
+                    <div class="checkbox-group">
+                      <label><input type="checkbox" /> Commercial Auto</label>
+                      <label><input type="checkbox" /> GeneralLiability</label>
+                      <label><input type="checkbox" /> Motor Truck Cargo</label>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <label>Enter Name of Person or Organization<span class="req-star">*</span></label>
+                    <input type="text" class="input-control" placeholder="Insured Name" />
+                  </div>
+                  <div class="form-row">
+                    <div></div>
+                    <input type="text" class="input-control" placeholder="Street Address" />
+                  </div>
+                  <div class="form-row">
+                    <div></div>
+                    <div class="three-inline-inputs">
+                      <input type="text" class="input-control" placeholder="City" />
+                      <select class="input-control"><option>Select State</option></select>
+                      <input type="text" class="input-control" placeholder="Zip" />
+                    </div>
+                  </div>
+                  <div class="panel-inner-btn-wrap">
+                    <button class="btn-green-action"><i class="fa-solid fa-plus"></i> Add Additional Insured</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Delete AI -->
+          <div class="subtab-content" id="ai-pane-delete-ai" style="display: none;">
+            <div class="dual-pane-grid">
+              <div class="left-rail-box">
+                <div class="rail-header">
+                  <span>Delete AI - 2</span>
+                  <div class="rail-icons">
+                    <div class="checkbox-ph"></div>
+                    <i class="fa-solid fa-trash-can"></i>
+                    <i class="fa-solid fa-circle-plus add-icon"></i>
+                  </div>
+                </div>
+                <div class="rail-item"><span>AI 1</span><div class="rail-item-actions"><div class="checkbox-ph"></div><i class="fa-solid fa-trash-can trash-icon"></i></div></div>
+                <div class="rail-item"><span>AI 2</span><div class="rail-item-actions"><div class="checkbox-ph"></div><i class="fa-solid fa-trash-can trash-icon"></i></div></div>
+              </div>
+              <div class="form-panel">
+                <div class="panel-header-banner">Delete Additional Insured</div>
+                <div class="panel-body">
+                  <div class="form-row">
+                    <label>Select Line of Business<span class="req-star">*</span></label>
+                    <div class="checkbox-group">
+                      <label><input type="checkbox" /> Commercial Auto</label>
+                      <label><input type="checkbox" /> GeneralLiability</label>
+                      <label><input type="checkbox" /> Motor Truck Cargo</label>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <label>Enter Name of Person or Organization<span class="req-star">*</span></label>
+                    <input type="text" class="input-control" placeholder="Insured Name" />
+                  </div>
+                  <div class="form-row">
+                    <div></div>
+                    <input type="text" class="input-control" placeholder="Street Address" />
+                  </div>
+                  <div class="form-row">
+                    <div></div>
+                    <div class="three-inline-inputs">
+                      <input type="text" class="input-control" placeholder="City" />
+                      <select class="input-control"><option>Select State</option></select>
+                      <input type="text" class="input-control" placeholder="Zip" />
+                    </div>
+                  </div>
+                  <div class="panel-inner-btn-wrap">
+                    <button class="btn-green-action"><i class="fa-solid fa-plus"></i> Enter Additional Insured for Deletion</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Add Loss Payee -->
+          <div class="subtab-content" id="ai-pane-add-lp" style="display: none;">
+            <div class="dual-pane-grid">
+              <div class="left-rail-box">
+                <div class="rail-header">
+                  <span>Add Loss Payee - 1</span>
+                  <div class="rail-icons">
+                    <div class="checkbox-ph"></div>
+                    <i class="fa-solid fa-trash-can"></i>
+                    <i class="fa-solid fa-circle-plus add-icon"></i>
+                  </div>
+                </div>
+                <div class="rail-item"><span>LP 1</span><div class="rail-item-actions"><div class="checkbox-ph"></div><i class="fa-solid fa-trash-can trash-icon"></i></div></div>
+              </div>
+              <div class="form-panel">
+                <div class="panel-header-banner">Add Loss Payee</div>
+                <div class="panel-body">
+                  <div class="form-row">
+                    <label>Enter Name<span class="req-star">*</span></label>
+                    <input type="text" class="input-control" placeholder="Loss Payee Name" />
+                  </div>
+                  <div class="form-row">
+                    <label>Address<span class="req-star">*</span></label>
+                    <input type="text" class="input-control" placeholder="Street Address" />
+                  </div>
+                  <div class="form-row">
+                    <label>City / State / Zip<span class="req-star">*</span></label>
+                    <div class="three-inline-inputs">
+                      <input type="text" class="input-control" placeholder="City" />
+                      <select class="input-control"><option>Select St...</option></select>
+                      <input type="text" class="input-control" placeholder="Zip" />
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <label>Loan Number</label>
+                    <input type="text" class="input-control" placeholder="Loan Number (Optional)" />
+                  </div>
+                  <div class="panel-inner-btn-wrap">
+                    <button class="btn-green-action"><i class="fa-solid fa-plus"></i> Add Another Loss Payee</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- STEP 4: POLICY HOLDER -->
+        <section id="step-policy-holder" class="step-view" style="display: none;">
+          <div style="font-weight:700; font-size:13px; margin-bottom:12px;">Policy Holder Modifications</div>
+          <div class="single-pane-grid">
+            
+            <!-- Section 1: Insured -->
+            <div id="ph-sec-insured" class="ph-sub-block">
+              <div style="font-weight:700; font-size:12px; margin-bottom:6px; color:var(--primary-dark);"><i class="fa-solid fa-user-tag"></i> Insured Information</div>
+              <div class="form-row two-col-inputs">
+                <label>Name:<span class="req-star">*</span></label>
+                <input type="text" class="input-control" placeholder="Insured Name" />
+                <label>DBA:<span class="req-star">*</span></label>
+                <input type="text" class="input-control" placeholder="DBA" />
+              </div>
+            </div>
+
+            <!-- Section 2: Address -->
+            <div id="ph-sec-address" class="ph-sub-block" style="margin-top: 14px;">
+              <div style="font-weight:700; font-size:12px; margin-bottom:6px; color:var(--primary-dark);"><i class="fa-solid fa-location-dot"></i> Address Details</div>
+              <div class="form-row two-col-inputs">
+                <label>Address Type:<span class="req-star">*</span></label>
+                <select class="input-control"><option>Select Option</option></select>
+                <label>Address:<span class="req-star">*</span></label>
+                <input type="text" class="input-control" placeholder="Street Address" />
+              </div>
+              <div class="form-row two-col-inputs">
+                <label>City:<span class="req-star">*</span></label>
+                <input type="text" class="input-control" placeholder="City" />
+                <label>State:<span class="req-star">*</span></label>
+                <select class="input-control"><option>State</option></select>
+              </div>
+              <div class="form-row two-col-inputs">
+                <label>Zip:<span class="req-star">*</span></label>
+                <input type="text" class="input-control" placeholder="Zip" style="max-width: 150px;" />
+                <div></div><div></div>
+              </div>
+              <div style="text-align: right; margin-bottom: 8px;">
+                <a class="action-link-btn">Add Another Address</a>
+              </div>
+            </div>
+
+            <!-- Section 3: Filings -->
+            <div id="ph-sec-filings" class="ph-sub-block" style="margin-top: 14px;">
+              <div style="font-weight:700; font-size:12px; margin-bottom:6px; color:var(--primary-dark);"><i class="fa-solid fa-file-contract"></i> Filings</div>
+              <div class="form-row">
+                <label>Select Filings Type:<span class="req-star">*</span></label>
+                <div class="checkbox-group">
+                  <label><input type="checkbox" /> OS / OW</label>
+                  <label><input type="checkbox" /> State Filings</label>
+                  <label><input type="checkbox" /> Federal Filings</label>
+                </div>
+              </div>
+              <div class="form-row">
+                <label>Please list the filings needed:<span class="req-star">*</span></label>
+                <input type="text" class="input-control" />
+              </div>
+            </div>
+
+            <!-- Section 4: Commodity -->
+            <div id="ph-sec-commodity" class="ph-sub-block" style="margin-top: 14px;">
+              <div style="font-weight:700; font-size:12px; margin-bottom:6px; color:var(--primary-dark);"><i class="fa-solid fa-boxes-stacked"></i> Commodity Information</div>
+              <div class="form-row two-col-inputs">
+                <label>Commodity:<span class="req-star">*</span></label>
+                <select class="input-control"><option>Select Commodity</option></select>
+                <label>Commodity %:<span class="req-star">*</span></label>
+                <input type="text" class="input-control" value="0" />
+              </div>
+              <div style="text-align: right; margin-bottom: 8px;">
+                <a class="action-link-btn">Add Additional Commodity</a>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- STEP 5: COVERAGES -->
+        <section id="step-coverages" class="step-view" style="display: none;">
+          <div class="panel-header-banner" style="margin-bottom: 12px; border-radius: 3px;">Coverage and Deductible</div>
+          <div class="subtabs-container" id="tabs-coverages">
+            <button class="subtab active" data-subtab="coverage" onclick="selectSubTab('step-coverages', 'coverage')">Coverage</button>
+            <button class="subtab" data-subtab="deductible" onclick="selectSubTab('step-coverages', 'deductible')">Deductible</button>
+          </div>
+        </section>
+
+        <!-- STEP 6: LOSS RUN -->
+        <section id="step-loss-run" class="step-view" style="display: none;">
+          <div class="panel-header-banner" style="margin-bottom: 12px; border-radius: 3px;">Loss Run Request</div>
+        </section>
+
+        <!-- STEP 7: OTHERS -->
+        <section id="step-others" class="step-view" style="display: none;">
+          <div class="panel-header-banner" style="margin-bottom: 12px; border-radius: 3px;">Other Endorsements</div>
+        </section>
+
+        <!-- COMMON SHARED NOTES AREA (Steps 3-7) -->
+        <div id="shared-notes-container" class="notes-section" style="display: none;">
+          <label>Enter any notes you would like the Berkley Small Business Solutions Underwriter to consider below:<span class="req-star">*</span></label>
+          <textarea class="notes-textarea"></textarea>
+        </div>
+
+        <!-- COMMON SHARED SUPPORTING DOCUMENTS DROPZONE -->
+        <div class="uploader-wrap" id="shared-uploader-wrap">
+          <div style="font-size: 11px; color: #444; margin-bottom: 4px; display: none;" id="uploader-label">
+            Please upload supporting documents for this endorsement request
+          </div>
+          <div class="uploader-card">
+            <div class="upload-title">Drag &amp; Drop Files Here</div>
+            <div class="upload-subtitle">or</div>
+            <div class="browse-link">Browse Files</div>
+          </div>
+          <div class="uploader-card-footer-note">The combined file size limit is 15 MB.</div>
+        </div>
+
+        <!-- COMMON BOTTOM ACTION BAR -->
+        <div class="bottom-action-bar">
+          <button class="endorsement-switch-pill" onclick="resetToWorkflowSlate(currentStepKey)">
+            <i class="fa-solid fa-plus-minus"></i> Add/Remove Endorsement Type
+          </button>
+
+          <div class="nav-actions-right" id="standard-nav-actions">
+            <button class="pill-btn-nav" onclick="navigateStep(1)">
+              <i class="fa-solid fa-circle-arrow-right"></i> Save &amp; Continue
+            </button>
+          </div>
+
+          <div class="nav-actions-right" id="final-nav-actions" style="display: none;">
+            <button class="pill-btn-nav"><i class="fa-solid fa-book-open"></i> View Application</button>
+            <button class="pill-btn-nav"><i class="fa-solid fa-check"></i> Save &amp; Submit</button>
+            <button class="pill-btn-nav"><i class="fa-solid fa-floppy-disk"></i> Save as Draft &amp; Close</button>
+          </div>
+        </div>
+
+      </div><!-- End #form-body-container -->
+
+    </div>
+  </main>
+
+  <!-- 4. Site Footer -->
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="brand-logo-icon" style="width:36px; height:36px; font-size:16px;">
+          <i class="fa-solid fa-road"></i>
+        </div>
+        <div>
+          <h3>Berkley</h3>
+          <h4>SMALL BUSINESS SOLUTIONS</h4>
+          <p style="font-size: 9.5px; color: #777;">| a Berkley Company</p>
+        </div>
+      </div>
+      <div class="footer-contact">
+        <div class="phone">855-272-7555</div>
+        <div>Berkley Small Business Solutions</div>
+        <div>433 South Main Street, Suite 200</div>
+        <div>West Hartford, CT 06110</div>
+        <div style="margin-top: 4px;"><i class="fa-regular fa-envelope"></i> <a href="mailto:info@berkleysmallbusiness.com">info@berkleysmallbusiness.com</a></div>
+      </div>
+    </div>
+    <div class="footer-bottom-bar">
+      <div>&copy; 2026 Berkley Small Business Solutions | a Berkley Company</div>
+      <div><a href="#">Licensing</a> | <a href="#">Privacy Policy</a></div>
+    </div>
+  </footer>
+
+  <script>
+    // Configuration of available choices for each step with tile icons and descriptions
+    const stepConfig = {
+      'driver': {
+        title: 'Driver Endorsement',
+        type: 'subtabs',
+        options: [
+          { id: 'add-driver', label: 'Add Driver', icon: 'fa-user-plus', desc: 'Add new commercial driver details and licensing records to policy.' },
+          { id: 'delete-driver', label: 'Delete Driver', icon: 'fa-user-minus', desc: 'Remove existing drivers no longer active under this policy.' }
+        ]
+      },
+      'vehicle': {
+        title: 'Vehicle Endorsement',
+        type: 'subtabs',
+        options: [
+          { id: 'add-vehicle', label: 'Add Vehicle', icon: 'fa-truck', desc: 'Register power units, trailers, stated values, and custom equipment.' },
+          { id: 'delete-vehicle', label: 'Delete Vehicle', icon: 'fa-truck-arrow-right', desc: 'Schedule vehicle units for removal by entering VIN / ID number.' }
+        ]
+      },
+      'additional-insured': {
+        title: 'Additional Insured & Loss Payee',
+        type: 'subtabs',
+        options: [
+          { id: 'add-ai', label: 'Add Additional Insured', icon: 'fa-shield-halved', desc: 'Add insured certificate holders across auto, GL, or cargo lines.' },
+          { id: 'delete-ai', label: 'Delete Additional Insured', icon: 'fa-shield-xmark', desc: 'Remove existing additional insured entities.' },
+          { id: 'add-lp', label: 'Add Loss Payee', icon: 'fa-building-columns', desc: 'Attach financial institutions, lienholders, or loan accounts.' }
+        ]
+      },
+      'policy-holder': {
+        title: 'Policy Holder Endorsement',
+        type: 'sections',
+        options: [
+          { id: 'ph-insured', label: 'Insured Information', icon: 'fa-id-card', desc: 'Update legal company name and primary DBA.' },
+          { id: 'ph-address', label: 'Mailing & Garaging Address', icon: 'fa-location-dot', desc: 'Modify physical addresses and terminal locations.' },
+          { id: 'ph-filings', label: 'State & Federal Filings', icon: 'fa-file-contract', desc: 'Request OS/OW, state, or federal compliance filings.' },
+          { id: 'ph-commodity', label: 'Commodity Breakdown', icon: 'fa-boxes-stacked', desc: 'Update cargo commodity classifications and percentages.' }
+        ]
+      },
+      'coverages': {
+        title: 'Coverages & Deductibles',
+        type: 'subtabs',
+        options: [
+          { id: 'coverage', label: 'Coverage Updates', icon: 'fa-shield', desc: 'Request changes to limits or liability coverage endorsements.' },
+          { id: 'deductible', label: 'Deductible Options', icon: 'fa-tags', desc: 'Adjust comprehensive/collision deductible tiers.' }
+        ]
+      },
+      'loss-run': {
+        title: 'Loss Run Endorsement',
+        type: 'direct',
+        options: [
+          { id: 'loss-run-request', label: 'Loss Run History', icon: 'fa-file-lines', desc: 'Upload claims experience records and dispatch underwriter review.' }
+        ]
+      },
+      'others': {
+        title: 'Other Endorsement',
+        type: 'direct',
+        options: [
+          { id: 'other-endorsement', label: 'General Policy Changes', icon: 'fa-pen-to-square', desc: 'Submit general notes or specialized document attachments.' }
+        ]
+      }
+    };
+
+    // Pre-selected options for steps
+    const userSelections = {
+      'driver': ['add-driver', 'delete-driver'],
+      'vehicle': ['add-vehicle', 'delete-vehicle'],
+      'additional-insured': ['add-ai', 'add-lp'],
+      'policy-holder': ['ph-insured', 'ph-address', 'ph-filings', 'ph-commodity'],
+      'coverages': ['coverage'],
+      'loss-run': ['loss-run-request'],
+      'others': ['other-endorsement']
+    };
+
+    // Driver starts on the Zero-State Slate on initial landing
+    const slateActiveState = {
+      'driver': true,
+      'vehicle': true,
+      'additional-insured': true,
+      'policy-holder': true,
+      'coverages': true,
+      'loss-run': false,
+      'others': false
+    };
+
+    const currentSubTabKey = {
+      'driver': 'add-driver',
+      'vehicle': 'add-vehicle',
+      'additional-insured': 'add-ai',
+      'coverages': 'coverage'
+    };
+
+    const steps = ['driver', 'vehicle', 'additional-insured', 'policy-holder', 'coverages', 'loss-run', 'others'];
+    let currentStepIndex = 0;
+    let currentStepKey = 'driver';
+
+    /* --- STEP SWITCHING --- */
+    function switchStep(stepKey) {
+      currentStepIndex = steps.indexOf(stepKey);
+      currentStepKey = stepKey;
+      renderCurrentStep();
+    }
+
+    function navigateStep(direction) {
+      const nextIndex = Math.min(Math.max(0, currentStepIndex + direction), steps.length - 1);
+      switchStep(steps[nextIndex]);
+    }
+
+    /* --- SLATE TRIGGER / MODIFY BUTTON --- */
+    function resetToWorkflowSlate(stepKey) {
+      slateActiveState[stepKey] = true;
+      renderCurrentStep();
+    }
+
+    /* --- CONFIRM WORKFLOW SLATE SELECTIONS --- */
+    function confirmSlateSelection() {
+      const checkboxes = document.querySelectorAll(`input[name="slate_opt_${currentStepKey}"]:checked`);
+      const selected = Array.from(checkboxes).map(cb => cb.value);
+
+      if (selected.length === 0) {
+        alert('Please select at least one option to continue.');
+        return;
+      }
+
+      userSelections[currentStepKey] = selected;
+      slateActiveState[currentStepKey] = false; // Mark slate completed
+      renderCurrentStep();
+    }
+
+    /* --- RENDER CURRENT STEP WORKSPACE --- */
+    function renderCurrentStep() {
+      const activeKey = steps[currentStepIndex];
+      currentStepKey = activeKey;
+      const cfg = stepConfig[activeKey];
+      const selectedOpts = userSelections[activeKey] || [];
+      const isSlateActive = slateActiveState[activeKey] && cfg.options.length > 1;
+
+      // Update Top Stepper Circles
+      document.querySelectorAll('.step-item').forEach((elem, idx) => {
+        elem.classList.toggle('active', idx === currentStepIndex);
+      });
+
+      const slateCanvas = document.getElementById('landing-slate-canvas');
+      const formContainer = document.getElementById('form-body-container');
+      const modifyBtn = document.getElementById('modify-workflow-btn');
+
+      // Hide modify button if step has only 1 fixed option
+      modifyBtn.style.display = cfg.options.length > 1 && !isSlateActive ? 'inline-flex' : 'none';
+
+      if (isSlateActive) {
+        // RENDER ZERO-STATE SLATE
+        formContainer.style.display = 'none';
+        slateCanvas.style.display = 'block';
+        document.getElementById('slate-step-title').innerText = `${cfg.title} — Select Options`;
+
+        const tilesContainer = document.getElementById('slate-tiles-container');
+        tilesContainer.innerHTML = '';
+
+        cfg.options.forEach(opt => {
+          const isSelected = selectedOpts.includes(opt.id);
+          const tile = document.createElement('div');
+          tile.className = `workflow-tile ${isSelected ? 'selected' : ''}`;
+          tile.onclick = function(e) {
+            if (e.target.tagName !== 'INPUT') {
+              const cb = tile.querySelector('input');
+              cb.checked = !cb.checked;
+            }
+            tile.classList.toggle('selected', tile.querySelector('input').checked);
+          };
+
+          tile.innerHTML = `
+            <div>
+              <div class="tile-top-row">
+                <div class="tile-icon-box"><i class="fa-solid ${opt.icon}"></i></div>
+                <input type="checkbox" class="tile-checkbox" name="slate_opt_${activeKey}" value="${opt.id}" ${isSelected ? 'checked' : ''} />
+              </div>
+              <div class="tile-title">${opt.label}</div>
+            </div>
+            <div class="tile-desc">${opt.desc}</div>
+          `;
+          tilesContainer.appendChild(tile);
+        });
+
+      } else {
+        // RENDER FORM BODY
+        slateCanvas.style.display = 'none';
+        formContainer.style.display = 'block';
+
+        // Hide all step sections
+        document.querySelectorAll('.step-view').forEach(elem => elem.style.display = 'none');
+        const activeSection = document.getElementById(`step-${activeKey}`);
+        if (activeSection) activeSection.style.display = 'block';
+
+        // Apply dynamic subtabs / section visibility
+        if (cfg.type === 'subtabs') {
+          renderSubTabsForStep(activeKey, selectedOpts);
+        } else if (cfg.type === 'sections') {
+          renderSectionsForPolicyHolder(selectedOpts);
+        }
+
+        // Shared Notes visibility (Steps: Additional Insured, Policy Holder, Coverages, Loss Run, Others)
+        const notesContainer = document.getElementById('shared-notes-container');
+        const uploaderLabel = document.getElementById('uploader-label');
+        if (['additional-insured', 'policy-holder', 'coverages', 'loss-run', 'others'].includes(activeKey)) {
+          notesContainer.style.display = 'block';
+          uploaderLabel.style.display = 'block';
+        } else {
+          notesContainer.style.display = 'none';
+          uploaderLabel.style.display = 'none';
+        }
+
+        // Final Step Action Buttons
+        const isFinal = activeKey === 'others';
+        document.getElementById('standard-nav-actions').style.display = isFinal ? 'none' : 'flex';
+        document.getElementById('final-nav-actions').style.display = isFinal ? 'flex' : 'none';
+      }
+    }
+
+    /* Subtab management: shows only active subtabs */
+    function renderSubTabsForStep(stepKey, selectedOpts) {
+      const container = document.getElementById(`step-${stepKey}`);
+      if (!container) return;
+
+      const tabStrip = container.querySelector('.subtabs-container');
+      const tabButtons = tabStrip ? tabStrip.querySelectorAll('.subtab') : [];
+
+      let firstValidTab = null;
+
+      tabButtons.forEach(btn => {
+        const tabId = btn.getAttribute('data-subtab');
+        if (selectedOpts.includes(tabId)) {
+          btn.style.display = 'inline-block';
+          if (!firstValidTab) firstValidTab = tabId;
+        } else {
+          btn.style.display = 'none';
+        }
+      });
+
+      let activeTabToUse = currentSubTabKey[stepKey];
+      if (!activeTabToUse || !selectedOpts.includes(activeTabToUse)) {
+        activeTabToUse = firstValidTab;
+        currentSubTabKey[stepKey] = activeTabToUse;
+      }
+
+      if (activeTabToUse) {
+        selectSubTab(`step-${stepKey}`, activeTabToUse);
+      }
+    }
+
+    function selectSubTab(parentStepId, tabId) {
+      const container = document.getElementById(parentStepId);
+      if (!container) return;
+
+      const stepKey = parentStepId.replace('step-', '');
+      currentSubTabKey[stepKey] = tabId;
+
+      // Update button styles
+      const tabs = container.querySelectorAll('.subtabs-container .subtab');
+      tabs.forEach(tab => {
+        tab.classList.toggle('active', tab.getAttribute('data-subtab') === tabId);
+      });
+
+      // Update pane visibility
+      if (stepKey === 'driver') {
+        document.getElementById('driver-pane-add-driver').style.display = tabId === 'add-driver' ? 'block' : 'none';
+        document.getElementById('driver-pane-delete-driver').style.display = tabId === 'delete-driver' ? 'block' : 'none';
+      } else if (stepKey === 'vehicle') {
+        document.getElementById('vehicle-pane-add-vehicle').style.display = tabId === 'add-vehicle' ? 'block' : 'none';
+        document.getElementById('vehicle-pane-delete-vehicle').style.display = tabId === 'delete-vehicle' ? 'block' : 'none';
+      } else if (stepKey === 'additional-insured') {
+        document.getElementById('ai-pane-add-ai').style.display = tabId === 'add-ai' ? 'block' : 'none';
+        document.getElementById('ai-pane-delete-ai').style.display = tabId === 'delete-ai' ? 'block' : 'none';
+        document.getElementById('ai-pane-add-lp').style.display = tabId === 'add-lp' ? 'block' : 'none';
+      }
+    }
+
+    /* Policy Holder sections visibility */
+    function renderSectionsForPolicyHolder(selectedOpts) {
+      document.getElementById('ph-sec-insured').style.display = selectedOpts.includes('ph-insured') ? 'block' : 'none';
+      document.getElementById('ph-sec-address').style.display = selectedOpts.includes('ph-address') ? 'block' : 'none';
+      document.getElementById('ph-sec-filings').style.display = selectedOpts.includes('ph-filings') ? 'block' : 'none';
+      document.getElementById('ph-sec-commodity').style.display = selectedOpts.includes('ph-commodity') ? 'block' : 'none';
+    }
+
+    // Initialize on page load: lands on Driver with the Zero-State slate
+    document.addEventListener('DOMContentLoaded', () => {
+      renderCurrentStep();
+    });
+  </script>
+</body>
+</html>
